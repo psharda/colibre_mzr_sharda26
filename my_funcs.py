@@ -192,6 +192,11 @@ def plot_obsv_data(ax, zorder=3):
     ax[0][2].scatter(bb['logM'], bb['O_H_O_based'], marker='D', facecolor='yellow', edgecolor='k', 
                      zorder=zorder, s=median_ms)
 
+    #z=3.5, Stanton+2024
+    bb = pd.read_csv('observed_data/stanton2024_nirvandels_z3.5.csv')
+    ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='o', facecolor='red', edgecolor='k', 
+                     zorder=zorder,label='NIRVANDELS')
+
     #z=6-7, Kotiwale+2026
     bb = fits.open('observed_data/kotiwale2026_MZRtable_GRISM_z6.fits')
     ax[1][1].scatter(bb[1].data['logM50'], bb[1].data['Zgas50'], marker='s', facecolor='gold', 
@@ -625,6 +630,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask = np.abs(bb['logM'] - logmsel) <= dm
     ax.scatter(3.3*bb['logM'][mask]/bb['logM'][mask], bb['O_H_O_based'][mask], marker='D', facecolor='yellow', edgecolor='k', 
                      zorder=zorder, s=median_ms)
+
+    #z=3.5, Stanton+2024
+    bb = pd.read_csv('observed_data/stanton2024_nirvandels_z3.5.csv')
+    mask = np.abs(bb['logMstar'] - logmsel) <= dm
+    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='o', facecolor='red', edgecolor='k', 
+                     zorder=zorder, label='NIRVANDELS')
 
     #z=6-7, Kotiwale+2026
     bb = fits.open('observed_data/kotiwale2026_MZRtable_GRISM_z6.fits')
