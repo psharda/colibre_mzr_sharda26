@@ -9,3 +9,16 @@ To produce the figures from the paper, simply clone this repository and run the 
 For any queries about this repository or the associated paper, please contact Piyush Sharda, Leiden University (sharda@strw.leidenuniv.nl).
 
 For queries about the [COLIBRE Project](https://colibre.strw.leidenuniv.nl/), please contact Joop Schaye, Leiden University (schaye@strw.leidenuniv.nl)
+
+```Dependencies
+
+This repository needs the following python packages:
+numpy
+scipy
+astropy
+cmasher
+h5py
+matplotlib
+
+
+```
