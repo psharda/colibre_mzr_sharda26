@@ -4,22 +4,27 @@ import pandas as pd
 from astropy.io import fits
 from scipy.optimize import curve_fit, root_scalar
 
-#my functions
-def set_allticks(ax,fontsize=14,color='k'):
-    ax.tick_params(axis='both', which='major', direction = 'in', top=True, right=True, labelsize=fontsize, length=7, color=color)
-    ax.minorticks_on()
-    ax.tick_params(axis='both', which='minor', direction = 'in', top=True, right=True, labelsize=fontsize, length=4, color=color)
-    return None
+simpath = 'simulated_data/'
+simba_0_mass = np.load(simpath + 'SIMBA_z=0_mass.npy')
+simba_0_metallicity = np.load(simpath + 'SIMBA_z=0_metallicity.npy')
+simba_1_mass = np.load(simpath + 'SIMBA_z=1_mass.npy')
+simba_1_metallicity = np.load(simpath + 'SIMBA_z=1_metallicity.npy')
+simba_2_mass = np.load(simpath + 'SIMBA_z=2_mass.npy')
+simba_2_metallicity = np.load(simpath + 'SIMBA_z=2_metallicity.npy')
+simba_3_mass = np.load(simpath + 'SIMBA_z=3_mass.npy')
+simba_3_metallicity = np.load(simpath + 'SIMBA_z=3_metallicity.npy')
+simba_4_mass = np.load(simpath + 'SIMBA_z=4_mass.npy')
+simba_4_metallicity = np.load(simpath + 'SIMBA_z=4_metallicity.npy')
+simba_5_mass = np.load(simpath + 'SIMBA_z=5_mass.npy')
+simba_5_metallicity = np.load(simpath + 'SIMBA_z=5_metallicity.npy')
+simba_6_mass = np.load(simpath + 'SIMBA_z=6_mass.npy')
+simba_6_metallicity = np.load(simpath + 'SIMBA_z=6_metallicity.npy')
+simba_7_mass = np.load(simpath + 'SIMBA_z=7_mass.npy')
+simba_7_metallicity = np.load(simpath + 'SIMBA_z=7_metallicity.npy')
+simba_8_mass = np.load(simpath + 'SIMBA_z=8_mass.npy')
+simba_8_metallicity = np.load(simpath + 'SIMBA_z=8_metallicity.npy')
 
-def set_cbar(image,axis,cbar_label,fontsize=12,labelpad=0):
-    #sets all the properties of the colorbar for any figure
-    divider = make_axes_locatable(axis)
-    cax = divider.append_axes('right', size='5%', pad=0.1)
-    cb=f.colorbar(image, cax=cax, orientation='vertical')
-    cb.set_label(cbar_label, fontsize=fontsize, labelpad=labelpad)
-    cb.ax.tick_params(which='major',direction='in',labelsize=fontsize,length=5)
-    cb.ax.tick_params(which='minor',direction='in',labelsize=fontsize,length=3)
-    return None
+#my functions
 
 #retrieve the snapshot number corresponding to the given redshift
 def get_snapshot_index(filename, target_z=0, tol=1e-6):
