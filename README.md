@@ -4,7 +4,7 @@ The observational compilation is available in the directory `observed_data'.
 
 The compilation of simulated data used from COLIBRE, as well as from EAGLE, TNG and SIMBA is available in the directory `simulated_data'. The SIMBA data was kindly provided by Alex Garcia.
 
-To produce the figures from the paper, simply clone this repository and run the associated jupyter notebook, where each cell produces a given figure in the paper.
+To produce the figures from the paper, simply clone this repository and run the associated jupyter notebook ```plotting_scripts''', where each cell produces a given figure in the paper.
 
 For any queries about this repository or the associated paper, please contact Piyush Sharda, Leiden University (sharda@strw.leidenuniv.nl).
 
