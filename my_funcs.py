@@ -231,6 +231,9 @@ def plot_obsv_data(ax, zorder=3):
     #z=10.165 galaxy from Hsiao+2024
     ax[1][2].scatter(8.1, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                      zorder=7)
+    #z=8 galaxy from Wilott+2025 (data from Table C2 of Isobe+2026)
+    ax[1][1].scatter(7.67, 6.81, marker='^', facecolor='cyan', edgecolor='k', label='Wilott+2025', 
+                     zorder=zorder)
     #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
     ax[1][1].scatter([6.77, 7.29], [7.11, 7.11], marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
                      zorder=zorder)
@@ -448,11 +451,11 @@ def plot_obsv_data(ax, zorder=3):
         if labels==False:
             #print('First Sarkar galaxy in ', i, j)
             ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='*', label='PRIMAL', facecolor='blue', edgecolor='k', zorder=5, s=100)
+                             marker='*', label='PRIMAL', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
             labels = True
         else:
             ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='*', facecolor='blue', edgecolor='k', zorder=5, s=100)
+                             marker='*', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
 
     
     #z=4-8, Nakajima+2023
@@ -476,13 +479,13 @@ def plot_obsv_data(ax, zorder=3):
             #ax[i][j].errorbar(row['logMstar'], row['logOH'], xerr=[[row['e_logMstar']], [row['E_logMstar']]], yerr=[[row['e_logOH']], [row['E_logOH']]],
             #                  fmt='o', ecolor='black', label='ERO+GLASS+CEERS', mfc='white', mec='cyan')
             ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='o', label='ERO+GLASS+CEERS', facecolor='white', edgecolor='cyan', zorder=zorder)
+                             marker='o', label='ERO+GLASS+CEERS', facecolor='white', edgecolor='blue', zorder=zorder)
             labels = True
         else:
             #ax[i][j].errorbar(row['logMstar'], row['logOH'], xerr=[[row['e_logMstar']], [row['E_logMstar']]], yerr=[[row['e_logOH']], [row['E_logOH']]],
             #                  fmt='o', ecolor='black', mfc='white', mec='cyan')
             ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='o', facecolor='white', edgecolor='cyan', zorder=zorder)
+                             marker='o', facecolor='white', edgecolor='blue', zorder=zorder)
 
     #z=1-10, Isobe+2026
     df = pd.read_csv('observed_data/isobe2026_jades_darkhorse_oasis_z1-10.csv')
@@ -728,7 +731,6 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
         #z=10.165 galaxy from Hsiao+2024
         ax.scatter(10.165, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                          zorder=7)
-
     if np.abs(logmsel-6.77) <= dm:
         #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
         ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
@@ -747,6 +749,10 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     if np.abs(logmsel-7.88) <= dm:
         #z=8 galaxy from Mowla+2024 (data from Table C2 of Isobe+2026)
         ax.scatter(8.30, 6.99, marker='<', facecolor='white', edgecolor='m',label='Mowla+2024', 
+                         zorder=zorder)
+    if np.abs(logmsel-7.67) <= dm:
+        #z=8 galaxy from Wilott+2025 (data from Table C2 of Isobe+2026)
+        ax.scatter(8.20, 6.81, marker='^', facecolor='cyan', edgecolor='k',label='Wilott+2025', 
                          zorder=zorder)
 
     #z=9-10, Pollock+2025
@@ -808,13 +814,13 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     df = pd.read_csv('observed_data/sarkar2025_archival_z=4-10.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], df['logOH'][mask],
-                     marker='*', label='PRIMAL', facecolor='blue', edgecolor='k', zorder=5, s=100)
+                     marker='*', label='PRIMAL', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
     
     #z=4-8, Nakajima+2023
     df = pd.read_csv('observed_data/nakajima2023_z=4-8_ero_glass_ceers.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['zspec'][mask], df['logOH'][mask],
-                     marker='o', label='ERO+GLASS+CEERS', facecolor='white', edgecolor='cyan', zorder=zorder)
+                     marker='o', label='ERO+GLASS+CEERS', facecolor='white', edgecolor='blue', zorder=zorder)
 
     #z=7-9, Langeroodi+2023
     df = pd.read_csv('observed_data/langeroodi2023_archival_z=8.csv')
