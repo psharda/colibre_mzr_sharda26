@@ -231,6 +231,15 @@ def plot_obsv_data(ax, zorder=3):
     #z=10.165 galaxy from Hsiao+2024
     ax[1][2].scatter(8.1, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                      zorder=7)
+    #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
+    ax[1][1].scatter([6.77, 7.29], [7.11, 7.11], marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
+                     zorder=zorder)
+    #z=9.5 galaxy from Koller+2026 (data from Table C2 of Isobe+2026)
+    ax[1][2].scatter([6.83], [7.23], marker='<', facecolor='green', edgecolor='k', 
+                     zorder=zorder)
+    #z=8 galaxy from Mowla+2024 (data from Table C2 of Isobe+2026)
+    ax[1][1].scatter([7.88], [6.99], marker='<', facecolor='white', edgecolor='m',label='Mowla+2024', 
+                     zorder=zorder)
 
     #z=9-10, Pollock+2025
     bb = pd.read_csv('observed_data/pollock2025_archival_z=9-10.csv')
@@ -266,6 +275,24 @@ def plot_obsv_data(ax, zorder=3):
             #                  fmt='o', mfc='yellow', mec='k', ecolor='black')
             ax[i][j].scatter(row['Mstar'], row['OH_strong'],
                              marker='X', facecolor='olive', edgecolor='k', zorder=zorder)
+
+    #z=5-7, Hsiao+2025 (data from Table C2 of Isobe+2026)
+    df = pd.read_csv('observed_data/hsiao2025_sapphires_z5-6.csv')
+    labels = False
+    for idx, row in df.iterrows():
+        if 4 <= row['z'] < 6:
+            i, j = 1, 0
+        elif 6 <= row['z'] < 9:
+            i, j = 1, 1
+        else:
+            continue
+        if labels==False:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                              marker='s', facecolor='blue', edgecolor='k', label='SAPPHIRES', zorder=zorder)
+            labels = True
+        else:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='s', facecolor='blue', edgecolor='k', zorder=zorder)
 
     #z=6-7, Hsiao+2026
     df = pd.read_csv('observed_data/hsiao2026_z6_glimpsed.csv')
@@ -457,6 +484,30 @@ def plot_obsv_data(ax, zorder=3):
             ax[i][j].scatter(row['logMstar'], row['logOH'],
                              marker='o', facecolor='white', edgecolor='cyan', zorder=zorder)
 
+    #z=1-10, Isobe+2026
+    df = pd.read_csv('observed_data/isobe2026_jades_darkhorse_oasis_z1-10.csv')
+    # Loop over each row and plot in the right subplot
+    labels = False
+    for idx, row in df.iterrows():
+        if row['z'] < 2:
+            i, j = 0, 1
+        elif 2 <= row['z'] < 4:
+            i, j = 0, 2
+        elif 4 <= row['z'] < 6:
+            i, j = 1, 0
+        elif 6 <= row['z'] < 9:
+            i, j = 1, 1
+        else:
+            i, j = 1,2
+    
+        if labels==False:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='o', label='JADES+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
+            labels = True
+        else:
+           ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='o', facecolor='yellow', edgecolor='k', zorder=zorder)
+ 
     #z=7-9, Langeroodi+2023
     df = pd.read_csv('observed_data/langeroodi2023_archival_z=8.csv')
     # Loop over each row and plot in the right subplot
@@ -678,6 +729,26 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
         ax.scatter(10.165, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                          zorder=7)
 
+    if np.abs(logmsel-6.77) <= dm:
+        #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
+        ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
+                     zorder=zorder)
+
+    if np.abs(logmsel-7.29) <= dm:
+        #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
+        ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
+                     zorder=zorder)
+
+    if np.abs(logmsel-6.83) <= dm:
+        #z=9.5 galaxy from Koller+2026 (data from Table C2 of Isobe+2026)
+        ax.scatter(9.51, 7.23, marker='<', facecolor='green', edgecolor='k', 
+                         zorder=zorder)
+
+    if np.abs(logmsel-7.88) <= dm:
+        #z=8 galaxy from Mowla+2024 (data from Table C2 of Isobe+2026)
+        ax.scatter(8.30, 6.99, marker='<', facecolor='white', edgecolor='m',label='Mowla+2024', 
+                         zorder=zorder)
+
     #z=9-10, Pollock+2025
     bb = pd.read_csv('observed_data/pollock2025_archival_z=9-10.csv')
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
@@ -695,6 +766,13 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask = np.abs(df['Mstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], df['OH_strong'][mask],
                       marker='X', facecolor='olive', edgecolor='k', label='REBELS', zorder=zorder)
+
+
+    #z=5-7, Hsiao+2025 (data from Table C2 of Isobe+2026)
+    df = pd.read_csv('observed_data/hsiao2025_sapphires_z5-6.csv')
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
+    ax.scatter(df['z'][mask], df['OH'][mask],
+                      marker='s', facecolor='blue', edgecolor='k', label='SAPPHIRES', zorder=zorder)
 
     #z=6-7, Hsiao+2026
     df = pd.read_csv('observed_data/hsiao2026_z6_glimpsed.csv')
@@ -755,6 +833,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], df['OH'][mask],
                      marker='o', label='CECILIA', facecolor='gold', edgecolor='k', zorder=8)
+
+    #z=1-10, Isobe+2026
+    df = pd.read_csv('observed_data/isobe2026_jades_darkhorse_oasis_z1-10.csv')
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
+    ax.scatter(df['z'][mask], df['OH'][mask],
+                     marker='o', label='JADES+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
 
     #z=0.6-2.7, Wuyts+2016
     df = pd.read_csv('observed_data/wuyts2016_kmos3d_z=0.6-2.7.csv')
