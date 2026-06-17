@@ -211,13 +211,13 @@ def plot_obsv_data(ax, zorder=3):
 
     #z=5, Faisst+2026 (filename: 2.csv uses direct Te abundances wherever available. .csv uses strong line abundances)
     df = pd.read_csv('observed_data/faisst2026_z=5_alpine_cristal_jwst2.csv')
-    #xerr = np.vstack([df["Mstar_err_minus"], df["Mstar_err_plus"]])
-    #yerr = np.vstack([df["OH_strong_err_minus"], df["OH_strong_err_plus"]])
-    #ax[1][0].errorbar(df['Mstar'], df['OH_strong'], xerr, yerr, fmt='o', mfc='grey', mec='k', ecolor='black', label='CRISTAL')
-    #ax[1][0].scatter(df['Mstar'], df['OH_strong'], marker='o', facecolor='grey', edgecolor='k', 
-    #                 label='ALPINE-CRISTAL', zorder=zorder)
-    ax[1][0].scatter(df['Mstar'], df['OH'], marker='D', facecolor='white', edgecolor='m', 
-                     label='ALPINE-CRISTAL', zorder=zorder)
+    mask = df['Teflag'] == 1
+    # Te-based measurements
+    ax[1][0].scatter(df.loc[mask, 'Mstar'], df.loc[mask, 'OH'], marker='D', facecolor='white', edgecolor='m',
+                    label='ALPINE-CRISTAL', zorder=7)
+    # Non-Te measurements
+    ax[1][0].scatter(df.loc[~mask, 'Mstar'], df.loc[~mask, 'OH'], marker='D', facecolor='m', edgecolor='m',
+                    zorder=zorder)
 
     #z=10.38 galaxy from Curtis-Lake+2023, Table 1
     ax[1][2].scatter(7.58, 6.78, marker='o', facecolor='k', edgecolor='green', 
@@ -338,13 +338,13 @@ def plot_obsv_data(ax, zorder=3):
             #ax[i][j].errorbar(row['logMstar_val'], row['OH_strong_val'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_strong_err_minus']], [row['OH_strong_err_plus']]],
             #                  fmt='o', mfc='white', mec='m', ecolor='black', label='EXCELS')
             ax[i][j].scatter(row['logMstar_val'], row['OH_strong_val'],
-                             marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=zorder)
+                             marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=7)
             labels = True
         else:
             #ax[i][j].errorbar(row['logMstar_val'], row['OH_strong_val'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_strong_err_minus']], [row['OH_strong_err_plus']]],
             #                  fmt='o', mfc='white', mec='m', ecolor='black')
             ax[i][j].scatter(row['logMstar_val'], row['OH_strong_val'],
-                             marker='o', facecolor='white', edgecolor='m', zorder=zorder)
+                             marker='o', facecolor='white', edgecolor='m', zorder=7)
 
     #z=1-7, Sanders+2025
     df = pd.read_csv('observed_data/sanders2025_aurora_z=1-7.csv')
@@ -705,15 +705,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
 
     #z=5, Faisst+2026 (filename: 2.csv uses direct Te abundances wherever available. .csv uses strong line abundances)
     df = pd.read_csv('observed_data/faisst2026_z=5_alpine_cristal_jwst2.csv')
-    #xerr = np.vstack([df["Mstar_err_minus"], df["Mstar_err_plus"]])
-    #yerr = np.vstack([df["OH_strong_err_minus"], df["OH_strong_err_plus"]])
-    #ax.errorbar(df['Mstar'], df['OH_strong'], xerr, yerr, fmt='o', mfc='grey', mec='k', ecolor='black', label='CRISTAL')
-    #ax.scatter(df['Mstar'], df['OH_strong'], marker='o', facecolor='grey', edgecolor='k', 
-    #                 label='ALPINE-CRISTAL', zorder=zorder)
-    mask = np.abs(df['Mstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask], marker='D', facecolor='white', edgecolor='m', 
-                     label='ALPINE-CRISTAL', zorder=zorder)
-
+    mask_mass = np.abs(df['Mstar'] - logmsel) <= dm
+    mask_te = df['Teflag'] == 1
+    ax.scatter(df.loc[mask_mass & mask_te, 'z'], df.loc[mask_mass & mask_te, 'OH'], marker='D', facecolor='white', edgecolor='m', 
+                     label='ALPINE-CRISTAL', zorder=7)
+    ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='D', facecolor='m', edgecolor='m', 
+                     zorder=zorder)
 
     if np.abs(logmsel-7.58) <= dm:
         #z=10.38 galaxy from Curtis-Lake+2023, Table 1
@@ -790,7 +787,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     df = pd.read_csv('observed_data/stanton2026_z=2-8_excels.csv')
     mask = np.abs(df['logMstar_val'] - logmsel) <= dm
     ax.scatter(df['z_spec'][mask], df['OH_strong_val'][mask],
-                     marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=zorder)
+                     marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=7)
 
     #z=1-7, Sanders+2025
     df = pd.read_csv('observed_data/sanders2025_aurora_z=1-7.csv')
