@@ -180,8 +180,14 @@ def plot_obsv_data(ax, zorder=3):
     
     #z=0.8, Jain+2026
     bb = pd.read_csv('observed_data/jain2026_archival_z=0.8.csv')
-    ax[0][1].scatter(bb['logM'], bb['O_H_O_based'], marker='D', facecolor='yellow', edgecolor='k', 
-                     zorder=5, label='MOSDEF', s=median_ms)
+    for mm in range(0, len(bb['logM'])):
+        if mm%3 == 0:
+            ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
+                             zorder=5, label='MOSDEF', s=median_ms)
+        else:
+            ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
+                             zorder=2, label='MOSDEF', s=median_ms)
+
     #z=0.8, Zahid+2011
     bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
     ax[0][1].scatter(bb['logMstar'], bb['OH'], marker='<', facecolor='blue', edgecolor='k', zorder=5, 
@@ -253,6 +259,11 @@ def plot_obsv_data(ax, zorder=3):
     bb = pd.read_csv('observed_data/chemerynska2024_uncover_z=6-8.csv')
     ax[1][1].scatter(bb['logMstar'], bb['OH'], marker='*', facecolor='r', edgecolor='k', s=100,zorder=zorder, 
                      label='UNCOVER')
+
+    #z=2.3, Steidel+2014 (Table 6)
+    bb = pd.read_csv('observed_data/steidel2014_kbss_z2.3.csv')
+    ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='p', facecolor='c', edgecolor='k', s=median_ms,zorder=zorder, 
+                     label='KBSS')
     
     #z=6-7, Rowland+2025
     df = pd.read_csv('observed_data/rowland2025_z=6-7_rebels.csv')
@@ -596,19 +607,19 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for (idx, row), yval in zip(df.iterrows(), yy):
-        if row['z'] < 1.5:
+        if row['z'] < 2:
             i, j = 0, 1
-        elif 2.5 <= row['z'] < 3:
+        elif 2 <= row['z'] < 4:
             i, j = 0, 2
         else:
             continue
     
         if not labels:
-            ax[i][j].scatter(row['logMstar'], yval, marker='+', label='KMOS3D', facecolor='green', 
+            ax[i][j].scatter(row['logMstar'], yval, marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
                              zorder=zorder, s=100)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], yval, marker='+', facecolor='green', zorder=zorder, s=100)
+            ax[i][j].scatter(row['logMstar'], yval, marker='P', facecolor='green', edgecolor='k', zorder=zorder, s=100)
 
     #z=1-3, He+2026
     df = pd.read_csv('observed_data/he2026_z1-3_ngdeep_stacked.csv')
@@ -630,6 +641,24 @@ def plot_obsv_data(ax, zorder=3):
         else:
             ax[i][j].scatter(row['logMstar'], row['OH'],
                              marker='s', facecolor='m', edgecolor='k', zorder=zorder, s=median_ms)
+
+    #z=0.5-0.8, Lewis+2024
+    df = pd.read_csv('observed_data/lewis2024_legac_z0.7.csv')
+    # Loop over each row and plot in the right subplot
+    labels = False
+    for idx, row in df.iterrows():
+        if row['z'] < 2:
+            i, j = 0, 1
+        else:
+            continue
+    
+        if labels==False:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='p', label=r'LEGA-C', facecolor='m', edgecolor='k', zorder=zorder)
+            labels = True
+        else:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='p', facecolor='m', edgecolor='k', zorder=zorder)
 
     return None
 
@@ -757,6 +786,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
     ax.scatter(bb['z'][mask], bb['OH'][mask], marker='D', facecolor='white', edgecolor='k', zorder=7, 
                      label='Pollock+2026')
+
+    #z=2.3, Steidel+2014 (Table 6)
+    bb = pd.read_csv('observed_data/steidel2014_kbss_z2.3.csv')
+    mask = np.abs(bb['logMstar'] - logmsel) <= dm
+    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='p', facecolor='c', edgecolor='k', zorder=7, s=median_ms, 
+                     label='Steidel+2014')
     
     #z=6-8, Chemerynska+2024
     bb = pd.read_csv('observed_data/chemerynska2024_uncover_z=6-8.csv')
@@ -788,6 +823,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask = np.abs(df['logMstar_val'] - logmsel) <= dm
     ax.scatter(df['z_spec'][mask], df['OH_strong_val'][mask],
                      marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=7)
+
+    #z=0.5-0.8, Lewis+2024
+    df = pd.read_csv('observed_data/lewis2024_legac_z0.7.csv')
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
+    ax.scatter(df['z'][mask], df['OH'][mask],
+                     marker='p', facecolor='m', edgecolor='k', label='LEGA-C', zorder=zorder)
 
     #z=1-7, Sanders+2025
     df = pd.read_csv('observed_data/sanders2025_aurora_z=1-7.csv')
@@ -848,7 +889,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     xx=np.log10(df['NIIHa'])
     yy=np.array([invert_Curti20N2(x) for x in xx])
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], yy[mask], marker='+', label='KMOS3D', facecolor='green', 
+    ax.scatter(df['z'][mask], yy[mask], marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
                      zorder=zorder, s=100)
 
     #z=1-3, He+2026
