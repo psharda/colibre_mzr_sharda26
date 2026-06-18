@@ -199,8 +199,8 @@ def plot_obsv_data(ax, zorder=3):
 
     #z=6-7, Kotiwale+2026
     bb = fits.open('observed_data/kotiwale2026_MZRtable_GRISM_z6.fits')
-    ax[1][1].scatter(bb[1].data['logM50'], bb[1].data['Zgas50'], marker='s', facecolor='gold', 
-                     edgecolor='k', zorder=zorder, label=r'EIGER+ALT+COLA1',s=median_ms)
+    ax[1][1].scatter(bb[1].data['logM50'], bb[1].data['Zgas50'], marker='s', facecolor='white', 
+                     edgecolor='blue', zorder=zorder, label=r'EIGER+ALT+COLA1',s=median_ms)
 
     #z=0.6-1.8, Gillmann+2021
     bb = pd.read_csv('observed_data/gillmann2021_kross_kges_z=0.6-1.8.csv')
@@ -694,8 +694,8 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     #z=6-7, Kotiwale+2026
     bb = fits.open('observed_data/kotiwale2026_MZRtable_GRISM_z6.fits')
     mask = np.abs(bb[1].data['logM50'] - logmsel) <= dm
-    ax.scatter(6.5*bb[1].data['logM50'][mask]/bb[1].data['logM50'][mask], bb[1].data['Zgas50'][mask], marker='s', facecolor='gold', 
-                     edgecolor='k', zorder=zorder, label=r'EIGER+ALT+COLA1',s=median_ms)
+    ax.scatter(6.5*bb[1].data['logM50'][mask]/bb[1].data['logM50'][mask], bb[1].data['Zgas50'][mask], marker='s', facecolor='white', 
+                     edgecolor='b', zorder=zorder, label=r'EIGER+ALT+COLA1',s=median_ms)
 
     #z=0.6-1.8, Gillmann+2021
     bb = pd.read_csv('observed_data/gillmann2021_kross_kges_z=0.6-1.8.csv')
