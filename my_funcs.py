@@ -379,7 +379,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z_spec'] < 2:
+        if 0.5 <= row['z_spec'] < 2:
             i, j = 0, 1
         elif 2 <= row['z_spec'] < 4:
             i, j = 0, 2
@@ -410,7 +410,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z_spec'] < 2:
+        if 0.5 <= row['z_spec'] < 2:
             i, j = 0, 1
         elif 2 <= row['z_spec'] < 4:
             i, j = 0, 2
@@ -437,7 +437,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -458,12 +458,35 @@ def plot_obsv_data(ax, zorder=3):
             ax[i][j].scatter(row['logMstar'], row['OH'],
                              marker='v', facecolor='gold', edgecolor='k', zorder=zorder)
 
+    #z=1-2, Revalski+2024
+    df = pd.read_csv('observed_data/revalski2024_mudf_muse_z1-2.csv')
+    labels = False
+    for (zmin, zmax, i, j) in [
+        (0.5, 2, 0, 1),
+        (2, 4, 0, 2),
+        (4, 6, 1, 0),
+        (6, 9, 1, 1),
+        (9, np.inf, 1, 2),
+    ]:
+
+        sel = (df['z'] >= zmin) & (df['z'] < zmax)
+        sub = df.loc[sel]
+        te = sub['Teflag'] == 1
+
+        if labels == False:
+            ax[i][j].scatter(sub.loc[te, 'logMstar'], sub.loc[te, 'OH'], marker='p', facecolor='white', edgecolor='b',
+                             label='MUDF', zorder=7)
+            labels = True
+        else:
+            ax[i][j].scatter(sub.loc[~te, 'logMstar'], sub.loc[~te, 'OH'], marker='p', facecolor='b', edgecolor='b',
+                            zorder=zorder)
+
     #z=1-3, Li+2023
     df = pd.read_csv('observed_data/li2023_a2744_smacs_z2-3.csv')
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -484,7 +507,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['Redshift'] < 2:
+        if 0.5 <= row['Redshift'] < 2:
             i, j = 0, 1
         elif 2 <= row['Redshift'] < 4:
             i, j = 0, 2
@@ -514,7 +537,7 @@ def plot_obsv_data(ax, zorder=3):
     df = pd.read_csv('observed_data/sarkar2025_archival_z=4-10.csv')
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -542,7 +565,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['zspec'] < 2:
+        if 0.5 <= row['zspec'] < 2:
             i, j = 0, 1
         elif 2 <= row['zspec'] < 4:
             i, j = 0, 2
@@ -571,7 +594,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -595,7 +618,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z_spec'] < 2:
+        if 0.5 <= row['z_spec'] < 2:
             i, j = 0, 1
         elif 2 <= row['z_spec'] < 4:
             i, j = 0, 2
@@ -621,7 +644,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -647,7 +670,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -675,7 +698,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for (idx, row), yval in zip(df.iterrows(), yy):
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -694,7 +717,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         elif 2 <= row['z'] < 4:
             i, j = 0, 2
@@ -715,7 +738,7 @@ def plot_obsv_data(ax, zorder=3):
     # Loop over each row and plot in the right subplot
     labels = False
     for idx, row in df.iterrows():
-        if row['z'] < 2:
+        if 0.5 <= row['z'] < 2:
             i, j = 0, 1
         else:
             continue
@@ -800,13 +823,22 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     ax.scatter(bb['z'][mask],bb['OH'][mask],marker='*',facecolor='cyan',edgecolor='k',zorder=zorder,
                      label=r'KROSS+KGES', s=median_ms)
 
-    #z=5, Faisst+2026 (filename: 2.csv uses direct Te abundances wherever available. .csv uses strong line abundances)
+    #z=5, Faisst+2026
     df = pd.read_csv('observed_data/faisst2026_z=5_alpine_cristal_jwst2.csv')
     mask_mass = np.abs(df['Mstar'] - logmsel) <= dm
     mask_te = df['Teflag'] == 1
     ax.scatter(df.loc[mask_mass & mask_te, 'z'], df.loc[mask_mass & mask_te, 'OH'], marker='D', facecolor='white', edgecolor='m', 
                      label='ALPINE-CRISTAL', zorder=7)
     ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='D', facecolor='m', edgecolor='m', 
+                     zorder=zorder)
+
+    #z=1-2, Revalski+2024
+    df = pd.read_csv('observed_data/revalski2024_mudf_muse_z1-2.csv')
+    mask_mass = np.abs(df['logMstar'] - logmsel) <= dm
+    mask_te = df['Teflag'] == 1
+    ax.scatter(df.loc[mask_mass & mask_te, 'z'], df.loc[mask_mass & mask_te, 'OH'], marker='p', facecolor='white', edgecolor='b', 
+                     label='MUDF', zorder=7)
+    ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='p', facecolor='b', edgecolor='b', 
                      zorder=zorder)
 
     if np.abs(logmsel-7.58) <= dm:
