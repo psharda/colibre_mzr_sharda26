@@ -410,6 +410,26 @@ def plot_obsv_data(ax, zorder=3):
             ax[i][j].scatter(row['logMstar'], row['OH'],
                              marker='v', facecolor='gold', edgecolor='k', zorder=zorder)
 
+    #z=1-3, Li+2023
+    df = pd.read_csv('observed_data/li2023_a2744_smacs_z2-3.csv')
+    # Loop over each row and plot in the right subplot
+    labels = False
+    for idx, row in df.iterrows():
+        if row['z'] < 2:
+            i, j = 0, 1
+        elif 2 <= row['z'] < 4:
+            i, j = 0, 2
+        else:
+            continue
+    
+        if labels==False:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='D', facecolor='r', edgecolor='k', label='A2744+SMACS', zorder=zorder)
+            labels = True
+        else:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='D', facecolor='r', edgecolor='k', zorder=zorder)
+
     
     #z=3-10, Curti+2024
     df = pd.read_csv('observed_data/curti2024_z=3-10_jades.csv')
@@ -841,6 +861,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], df['OH'][mask],
                      marker='v', facecolor='gold', edgecolor='k', label='CANDELS', zorder=zorder)
+
+    #z=1-3, Li+2023
+    df = pd.read_csv('observed_data/li2023_a2744_smacs_z2-3.csv')
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
+    ax.scatter(df['z'][mask], df['OH'][mask],
+                     marker='D', facecolor='r', edgecolor='k', label='A2744+SMACS', zorder=zorder)
     
     #z=3-10, Curti+2024
     df = pd.read_csv('observed_data/curti2024_z=3-10_jades.csv')
