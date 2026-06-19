@@ -106,6 +106,54 @@ def plot_median(aa, bb, xlim_min=5.95, xlim_max=11.95, bins=61):
     p84 = np.array(p84)
     return bin_centers, medians, counts, p16, p84
 
+def weighted_percentile(values, weights, percentile):
+    """
+    percentile in [0,100]
+    """
+    sorter = np.argsort(values)
+
+    values = values[sorter]
+    weights = weights[sorter]
+
+    cdf = np.cumsum(weights)
+    #normalize the CDF
+    cdf /= cdf[-1]
+
+    return np.interp(percentile/100., cdf, values)
+
+def plot_median_weighted(aa, bb, weights, xlim_min=5.95, xlim_max=11.95, bins=61):
+
+    x = aa #log10 stellar mass
+    y = bb #12+log(O/H)
+    w = weights
+
+    bins = np.linspace(xlim_min, xlim_max, bins)
+    bin_centers = (bins[:-1] + bins[1:]) / 2.0
+
+    medians = []
+    counts = []
+    p16 = []
+    p84 = []
+
+    for i in range(len(bins)-1):
+        mask = (x >= bins[i]) & (x < bins[i+1])
+        counts.append(np.sum(mask))
+
+        if np.any(mask):
+            medians.append(weighted_percentile(y[mask], w[mask], 50))
+            p16.append(weighted_percentile(y[mask], w[mask], 16))
+            p84.append(weighted_percentile(y[mask], w[mask], 84))
+        else:
+            medians.append(np.nan)
+            p16.append(np.nan)
+            p84.append(np.nan)
+
+    medians = np.array(medians)
+    counts = np.array(counts)
+    p16 = np.array(p16)
+    p84 = np.array(p84)
+    return bin_centers, medians, counts, p16, p84
+
 def make_shades(hex_color, n=5):
     """
     Generate n shades from light to dark for a given hex color.
