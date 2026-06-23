@@ -707,10 +707,31 @@ def plot_obsv_data(ax, zorder=3):
     
         if not labels:
             ax[i][j].scatter(row['logMstar'], yval, marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
-                             zorder=zorder, s=100)
+                             zorder=zorder, s=40)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], yval, marker='P', facecolor='green', edgecolor='k', zorder=zorder, s=100)
+            ax[i][j].scatter(row['logMstar'], yval, marker='P', facecolor='green', edgecolor='k', zorder=zorder, s=40)
+
+    #z=1.4-2.5, Forster-Schreiber+2018
+    df = pd.read_csv('observed_data/forster-schreiber2018_sins_z2.csv')
+    xx=np.log10(df['N2'])
+    yy=np.array([invert_Curti20N2(x) for x in xx])
+    # Loop over each row and plot in the right subplot
+    labels = False
+    for (idx, row), yval in zip(df.iterrows(), yy):
+        if 0.5 <= row['z'] < 2:
+            i, j = 0, 1
+        elif 2 <= row['z'] < 4:
+            i, j = 0, 2
+        else:
+            continue
+    
+        if not labels:
+            ax[i][j].scatter(row['logMstar'], yval, marker='^', label='SINS/zc-SINF', facecolor='red', edgecolor='k',
+                             zorder=zorder)
+            labels = True
+        else:
+            ax[i][j].scatter(row['logMstar'], yval, marker='^', facecolor='red', edgecolor='k', zorder=zorder)
 
     #z=1-3, He+2026
     df = pd.read_csv('observed_data/he2026_z1-3_ngdeep_stacked.csv')
@@ -996,7 +1017,15 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     yy=np.array([invert_Curti20N2(x) for x in xx])
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], yy[mask], marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
-                     zorder=zorder, s=100)
+                     zorder=zorder, s=40)
+
+    #z=1.4-2.5, Forster-Schreiber+2018
+    df = pd.read_csv('observed_data/forster-schreiber2018_sins_z2.csv')
+    xx=np.log10(df['N2'])
+    yy=np.array([invert_Curti20N2(x) for x in xx])
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
+    ax.scatter(df['z'][mask], yy[mask], marker='^', label='SINS/zc-SINF', facecolor='r', edgecolor='k',
+                     zorder=zorder)
 
     #z=1-3, He+2026
     df = pd.read_csv('observed_data/he2026_z1-3_ngdeep_stacked.csv')
