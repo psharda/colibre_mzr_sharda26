@@ -223,7 +223,7 @@ def plot_obsv_data(ax, zorder=3):
     df = h5py.File('observed_data/Fraser-McKelvie_2021.hdf5')
     xx = np.log10(df['x/values'][:]/1.989e30) #base units are kg
     yy = df['y/values'][:]
-    ax[0][0].scatter(xx, yy, marker='^', facecolor='white', edgecolor='k', label='SAMI', zorder=zorder,
+    ax[0][0].scatter(xx, yy, marker='^', facecolor='green', edgecolor='k', label='SAMI', zorder=zorder,
                     s=median_ms)
     
     #z=0.8, Jain+2026
@@ -280,7 +280,7 @@ def plot_obsv_data(ax, zorder=3):
     ax[1][2].scatter(np.log10(1.7e8), 7.292, marker='v', facecolor='k', edgecolor='green', 
                      label='Álvarez-Márquez+2026', zorder=5)
     #z=9.3 galaxy from Bik+2026
-    ax[1][2].scatter(np.log10(1.6e9), 7.84, marker='s', facecolor='cyan', edgecolor='k', 
+    ax[1][2].scatter(np.log10(1.6e9), 7.84, marker='s', facecolor='m', edgecolor='k', 
                      label='Bik+2026', zorder=5)
     #z=10.165 galaxy from Hsiao+2024
     ax[1][2].scatter(8.1, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
@@ -397,13 +397,13 @@ def plot_obsv_data(ax, zorder=3):
             #ax[i][j].errorbar(row['logMstar_val'], row['OH_strong_val'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_strong_err_minus']], [row['OH_strong_err_plus']]],
             #                  fmt='o', mfc='white', mec='m', ecolor='black', label='EXCELS')
             ax[i][j].scatter(row['logMstar_val'], row['OH_strong_val'],
-                             marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=7)
+                             marker='s', facecolor='cyan', edgecolor='k', label='EXCELS', zorder=7)
             labels = True
         else:
             #ax[i][j].errorbar(row['logMstar_val'], row['OH_strong_val'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_strong_err_minus']], [row['OH_strong_err_plus']]],
             #                  fmt='o', mfc='white', mec='m', ecolor='black')
             ax[i][j].scatter(row['logMstar_val'], row['OH_strong_val'],
-                             marker='o', facecolor='white', edgecolor='m', zorder=7)
+                             marker='s', facecolor='cyan', edgecolor='k', zorder=7)
 
     #z=1-7, Sanders+2025
     df = pd.read_csv('observed_data/sanders2025_aurora_z=1-7.csv')
@@ -805,7 +805,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     xx = np.log10(df['x/values'][:]/1.989e30) #base units are kg
     yy = df['y/values'][:]
     mask = np.abs(xx - logmsel) <= dm
-    ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='^', facecolor='white', edgecolor='k', label='SAMI', zorder=zorder,
+    ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='^', facecolor='green', edgecolor='k', label='SAMI', zorder=zorder,
                     s=median_ms)
     
     #z=0.8, Jain+2026
@@ -872,7 +872,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
                          label='Álvarez-Márquez+2026', zorder=5)
     if np.abs(logmsel-np.log10(1.6e9)) <= dm:
         #z=9.3 galaxy from Bik+2026
-        ax.scatter(9.3, 7.84, marker='s', facecolor='cyan', edgecolor='k', 
+        ax.scatter(9.3, 7.84, marker='s', facecolor='m', edgecolor='k', 
                          label='Bik+2026', zorder=5)
     if np.abs(logmsel-8.1) <= dm:
         #z=10.165 galaxy from Hsiao+2024
@@ -943,7 +943,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     df = pd.read_csv('observed_data/stanton2026_z=2-8_excels.csv')
     mask = np.abs(df['logMstar_val'] - logmsel) <= dm
     ax.scatter(df['z_spec'][mask], df['OH_strong_val'][mask],
-                     marker='o', facecolor='white', edgecolor='m', label='EXCELS', zorder=7)
+                     marker='s', facecolor='cyan', edgecolor='k', label='EXCELS', zorder=7)
 
     #z=0.5-0.8, Lewis+2024
     df = pd.read_csv('observed_data/lewis2024_legac_z0.7.csv')
