@@ -1,7 +1,7 @@
 This repository stores the code and data needed to reproduce the figures shown in the paper on the gas-phase mass-metallicity relation (MZR) of galaxies in the COLIBRE cosmological simulations:
 
 ```
-Title: The evolution of the gas-phase mass-metallicity relation from $z=15$ to $z=0$ in the COLIBRE cosmological simulations
+Title: The evolution of the galaxy gas-phase mass-metallicity relation from $z=15$ to $z=0$ in the COLIBRE cosmological simulations
 Authors: Piyush Sharda, Joop Schaye, Robert J. McGibbon et al.
 arXiv link: https://arxiv.org/abs/2606.25995
 ```
