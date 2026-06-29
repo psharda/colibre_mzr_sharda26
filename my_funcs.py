@@ -310,7 +310,7 @@ def plot_obsv_data(ax, zorder=3):
 
     #z=2.3, Steidel+2014 (Table 6)
     bb = pd.read_csv('observed_data/steidel2014_kbss_z2.3.csv')
-    ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='p', facecolor='c', edgecolor='k', s=median_ms,zorder=zorder, 
+    ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='p', facecolor='c', edgecolor='k', s=median_ms+50,zorder=zorder, 
                      label='KBSS')
     
     #z=6-7, Rowland+2025
@@ -432,6 +432,33 @@ def plot_obsv_data(ax, zorder=3):
             ax[i][j].scatter(row['logMstar'], row['O_H'],
                              marker='v', facecolor='white', edgecolor='k', zorder=8, s=50)
 
+
+    #z=1-7, Lam+2026
+    df = pd.read_csv('observed_data/lam2026_jades_stacked_z1-7.csv')
+    # Loop over each row and plot in the right subplot
+    labels = False
+    for idx, row in df.iterrows():
+        if 0.5 <= row['z'] < 2:
+            i, j = 0, 1
+        elif 2 <= row['z'] < 4:
+            i, j = 0, 2
+        elif 4 <= row['z'] < 6:
+            i, j = 1, 0
+        elif 6<= row['z'] < 9:
+            i, j = 1, 1
+        elif row['z'] >= 9:
+            i, j = 1, 2
+        else:
+            continue
+    
+        if labels==False:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='s', facecolor='g', edgecolor='k', label='JADES DR3', zorder=7, s=median_ms)
+            labels = True
+        else:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='s', facecolor='g', edgecolor='k', zorder=7, s=median_ms)
+
     #z=1-2, Henry+2021
     df = pd.read_csv('observed_data/henry2021_z=1-2_candels_wisp_tab5.csv')
     # Loop over each row and plot in the right subplot
@@ -525,7 +552,7 @@ def plot_obsv_data(ax, zorder=3):
             #ax[i][j].errorbar(row['logMstar'], row['OH'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_err_minus']], [row['OH_err_plus']]],
             #                  fmt='o', ecolor='black', label='JADES', mfc='white', mec='b')
             ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', label='JADES', facecolor='grey', edgecolor='k', zorder=zorder)
+                             marker='o', label='JADES DR1', facecolor='grey', edgecolor='k', zorder=zorder)
             labels = True
         else:
             #ax[i][j].errorbar(row['logMstar'], row['OH'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_err_minus']], [row['OH_err_plus']]],
@@ -607,7 +634,7 @@ def plot_obsv_data(ax, zorder=3):
     
         if labels==False:
             ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', label='JADES+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
+                             marker='o', label='JADES DR4+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
             labels = True
         else:
            ax[i][j].scatter(row['logMstar'], row['OH'],
@@ -911,7 +938,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     #z=2.3, Steidel+2014 (Table 6)
     bb = pd.read_csv('observed_data/steidel2014_kbss_z2.3.csv')
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
-    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='p', facecolor='c', edgecolor='k', zorder=7, s=median_ms, 
+    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='p', facecolor='c', edgecolor='k', zorder=7, s=median_ms+50, 
                      label='Steidel+2014')
     
     #z=6-8, Chemerynska+2024
@@ -957,6 +984,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     ax.scatter(df['z_spec'][mask], df['O_H'][mask],
                      marker='v', facecolor='white', edgecolor='k', label='AURORA', zorder=8, s=50)
 
+    #z=1-7, Lam+2026
+    df = pd.read_csv('observed_data/lam2026_jades_stacked_z1-7.csv')
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
+    ax.scatter(df['z'][mask], df['OH'][mask],
+                     marker='s', facecolor='g', edgecolor='k', label='JADES DR3', zorder=7, s=median_ms)
+
     #z=1-2, Henry+2021
     df = pd.read_csv('observed_data/henry2021_z=1-2_candels_wisp_tab5.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
@@ -973,7 +1006,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     df = pd.read_csv('observed_data/curti2024_z=3-10_jades.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['Redshift'][mask], df['OH'][mask],
-                     marker='o', label='JADES', facecolor='grey', edgecolor='k', zorder=zorder)
+                     marker='o', label='JADES DR1', facecolor='grey', edgecolor='k', zorder=zorder)
 
     #z=4-10, Sarkar+2025
     df = pd.read_csv('observed_data/sarkar2025_archival_z=4-10.csv')
@@ -1009,7 +1042,7 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     df = pd.read_csv('observed_data/isobe2026_jades_darkhorse_oasis_z1-10.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='o', label='JADES+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
+                     marker='o', label='JADES DR4+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
 
     #z=0.6-2.7, Wuyts+2016
     df = pd.read_csv('observed_data/wuyts2016_kmos3d_z=0.6-2.7.csv')
