@@ -236,6 +236,11 @@ def plot_obsv_data(ax, zorder=3):
             ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
                              zorder=2, label='MOSDEF', s=median_ms)
 
+    #z=0.0013, McQuinn+2026 GLOW
+    bb = pd.read_csv('observed_data/mcquinn2026_glow_z0.csv')
+    ax[0][0].scatter(bb['logMstar'], bb['OH'], marker='o', facecolor='white', edgecolor='green', zorder=3, 
+                     label='GLOW')
+
     #z=0.8, Zahid+2011
     bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
     ax[0][1].scatter(bb['logMstar'], bb['OH'], marker='<', facecolor='blue', edgecolor='k', zorder=5, 
@@ -279,9 +284,9 @@ def plot_obsv_data(ax, zorder=3):
     #z=10.05 galaxy from Álvarez-Márquez+2026, abstract
     ax[1][2].scatter(np.log10(1.7e8), 7.292, marker='v', facecolor='k', edgecolor='green', 
                      label='Álvarez-Márquez+2026', zorder=5)
-    #z=9.3 galaxy from Bik+2026
-    ax[1][2].scatter(np.log10(1.6e9), 7.84, marker='s', facecolor='m', edgecolor='k', 
-                     label='Bik+2026', zorder=5)
+    #z=9.3 galaxy from Ikeda+2026
+    ax[1][2].scatter(np.log10(1.6e9), 7.54, marker='s', facecolor='m', edgecolor='k', 
+                     label='Ikeda+2026', zorder=5)
     #z=10.165 galaxy from Hsiao+2024
     ax[1][2].scatter(8.1, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                      zorder=7)
@@ -502,11 +507,11 @@ def plot_obsv_data(ax, zorder=3):
 
         if labels == False:
             ax[i][j].scatter(sub.loc[te, 'logMstar'], sub.loc[te, 'OH'], marker='p', facecolor='white', edgecolor='b',
-                             label='MUDF', zorder=7)
+                             label='MUDF', zorder=7, s=50)
             labels = True
         else:
             ax[i][j].scatter(sub.loc[~te, 'logMstar'], sub.loc[~te, 'OH'], marker='p', facecolor='b', edgecolor='b',
-                            zorder=zorder)
+                            zorder=zorder, s=50)
 
     #z=1-3, Li+2023
     df = pd.read_csv('observed_data/li2023_a2744_smacs_z2-3.csv')
@@ -841,6 +846,12 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     ax.scatter(0.8*bb['logM'][mask]/bb['logM'][mask], bb['O_H_O_based'][mask], marker='D', facecolor='yellow', edgecolor='k', 
                      zorder=5, label='MOSDEF', s=median_ms)
 
+    #z=0.013, McQuinn+2026
+    bb = pd.read_csv('observed_data/mcquinn2026_glow_z0.csv')
+    mask = np.abs(bb['logMstar'] - logmsel) <= dm
+    ax.scatter(0.0013*bb['logMstar'][mask]/bb['logMstar'][mask], bb['OH'][mask], marker='o', facecolor='white', edgecolor='green', 
+                     zorder=5, label='GLOW')
+
     #z=0.8, Zahid+2011
     bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
@@ -885,9 +896,9 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask_mass = np.abs(df['logMstar'] - logmsel) <= dm
     mask_te = df['Teflag'] == 1
     ax.scatter(df.loc[mask_mass & mask_te, 'z'], df.loc[mask_mass & mask_te, 'OH'], marker='p', facecolor='white', edgecolor='b', 
-                     label='MUDF', zorder=7)
+                     label='MUDF', zorder=7, s=50)
     ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='p', facecolor='b', edgecolor='b', 
-                     zorder=zorder)
+                     zorder=zorder, s=50)
 
     if np.abs(logmsel-7.58) <= dm:
         #z=10.38 galaxy from Curtis-Lake+2023, Table 1
@@ -898,9 +909,9 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
         ax.scatter(10.05, 7.292, marker='v', facecolor='k', edgecolor='green', 
                          label='Álvarez-Márquez+2026', zorder=5)
     if np.abs(logmsel-np.log10(1.6e9)) <= dm:
-        #z=9.3 galaxy from Bik+2026
-        ax.scatter(9.3, 7.84, marker='s', facecolor='m', edgecolor='k', 
-                         label='Bik+2026', zorder=5)
+        #z=9.3 galaxy from Ikeda+2026
+        ax.scatter(9.3, 7.54, marker='s', facecolor='m', edgecolor='k', 
+                         label='Ikeda+2026', zorder=5)
     if np.abs(logmsel-8.1) <= dm:
         #z=10.165 galaxy from Hsiao+2024
         ax.scatter(10.165, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
