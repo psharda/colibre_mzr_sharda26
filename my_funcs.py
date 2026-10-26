@@ -197,18 +197,33 @@ def invert_Curti20N2(y, Zmin=7.0, Zmax=10.0, ngrid=1000):
     sol = root_scalar(lambda Z: Curti20N2(Z) - y, bracket=[a, b], method='brentq')
     return sol.root
 
-def plot_obsv_data(ax, zorder=3):
+
+def plot_obsv_data(ax, zorder=3, all_data=True):
     median_ms = 100 #larger marker size for median datapoints
     #overplot observational data
+
+
     #z=0, Tremonti+2004
     df = h5py.File('observed_data/Tremonti2004_Data.hdf5')
     xx = np.log10(df['x/values'][:])
     yy = df['y/values'][:]
-    ax[0][0].scatter(xx, yy, marker='>', facecolor='violet', edgecolor='k', label='SDSS DR2', zorder=7, 
-                     s=median_ms)
+    if all_data:
+        ax[0][0].scatter(xx, yy, marker='>', facecolor='violet', edgecolor='k', label='SDSS DR2', zorder=7, 
+                         s=median_ms)
+
     bb = pd.read_csv('observed_data/lee2006_spitzer_z=0.csv')
-    ax[0][0].scatter(bb['logM'], bb['OH'], marker='s', facecolor='white', edgecolor='k', 
+    # Direct Te metallicities: open squares
+    mask = bb['direct_flag'] == 1
+    ax[0][0].scatter(bb.loc[mask, 'logM'], bb.loc[mask, 'OH'], 
+                     marker='s', facecolor='white', edgecolor='k',
                      label='Lee+2006', zorder=zorder)
+    # Strong-line metallicities: filled black squares
+    mask = bb['direct_flag'] == 0
+    if all_data:
+        ax[0][0].scatter(bb.loc[mask, 'logM'], bb.loc[mask, 'OH'],
+                         marker='s', facecolor='black', edgecolor='k',
+                         zorder=zorder)
+
     #z=0 best-fit relation from Yates+2020
     xx = np.linspace(5.6,10.0,10)
     yy=0.293*xx + 5.575 #equation 14
@@ -217,24 +232,28 @@ def plot_obsv_data(ax, zorder=3):
     df = h5py.File('observed_data/Curti2020.hdf5')
     xx = np.log10(df['x/values'][:])
     yy = df['y/values'][:]
-    ax[0][0].scatter(xx, yy, marker='o', facecolor='cyan', edgecolor='k', label='SDSS DR7', zorder=zorder,
-                    s=median_ms)
+    if all_data:
+        ax[0][0].scatter(xx, yy, marker='o', facecolor='cyan', edgecolor='k', label='SDSS DR7', zorder=zorder,
+                        s=median_ms)
     #z=0, FM+2022
     df = h5py.File('observed_data/Fraser-McKelvie_2021.hdf5')
     xx = np.log10(df['x/values'][:]/1.989e30) #base units are kg
     yy = df['y/values'][:]
-    ax[0][0].scatter(xx, yy, marker='^', facecolor='green', edgecolor='k', label='SAMI', zorder=zorder,
-                    s=median_ms)
+    if all_data:
+        ax[0][0].scatter(xx, yy, marker='^', facecolor='green', edgecolor='k', label='SAMI', zorder=zorder,
+                        s=median_ms)
     
     #z=0.8, Jain+2026
     bb = pd.read_csv('observed_data/jain2026_archival_z=0.8.csv')
     for mm in range(0, len(bb['logM'])):
         if mm%3 == 0:
-            ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
-                             zorder=5, label='MOSDEF', s=median_ms)
+            if all_data:
+                ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
+                                 zorder=5, label='MOSDEF', s=median_ms)
         else:
-            ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
-                             zorder=2, label='MOSDEF', s=median_ms)
+            if all_data:
+                ax[0][1].scatter(bb['logM'][mm], bb['O_H_O_based'][mm], marker='D', facecolor='yellow', edgecolor='k', 
+                                 zorder=2, label='MOSDEF', s=median_ms)
 
     #z=0.0013, McQuinn+2026 GLOW
     bb = pd.read_csv('observed_data/mcquinn2026_glow_z0.csv')
@@ -242,19 +261,21 @@ def plot_obsv_data(ax, zorder=3):
                      label='GLOW')
 
     #z=0.8, Zahid+2011
-    bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
-    ax[0][1].scatter(bb['logMstar'], bb['OH'], marker='<', facecolor='blue', edgecolor='k', zorder=5, 
-                     label='DEEP2', s=median_ms)
+    #bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
+    #ax[0][1].scatter(bb['logMstar'], bb['OH'], marker='<', facecolor='blue', edgecolor='k', zorder=5, 
+    #                 label='DEEP2', s=median_ms)
     
     #z=3.3, Jain+2026
     bb = pd.read_csv('observed_data/jain2026_archival_z=3.3.csv')
-    ax[0][2].scatter(bb['logM'], bb['O_H_O_based'], marker='D', facecolor='yellow', edgecolor='k', 
-                     zorder=zorder, s=median_ms)
+    if all_data:
+        ax[0][2].scatter(bb['logM'], bb['O_H_O_based'], marker='D', facecolor='yellow', edgecolor='k', 
+                         zorder=zorder, s=median_ms)
 
     #z=3.5, Stanton+2024
     bb = pd.read_csv('observed_data/stanton2024_nirvandels_z3.5.csv')
-    ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='o', facecolor='red', edgecolor='k', 
-                     zorder=zorder,label='NIRVANDELS')
+    if all_data:
+        ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='o', facecolor='red', edgecolor='k', 
+                         zorder=zorder,label='NIRVANDELS')
 
     #z=6-7, Kotiwale+2026
     bb = fits.open('observed_data/kotiwale2026_MZRtable_GRISM_z6.fits')
@@ -265,8 +286,9 @@ def plot_obsv_data(ax, zorder=3):
     bb = pd.read_csv('observed_data/gillmann2021_kross_kges_z=0.6-1.8.csv')
     mask = (bb['z'] >= 0.7) & (bb['z'] <= 1.3)
     aa2,bb2,cc2,*_ = plot_median(np.log10(bb['Mass'][mask]), bb['OH'][mask], xlim_min=9, xlim_max=11, bins=11)
-    ax[0][1].scatter(aa2,bb2,marker='*',facecolor='cyan',edgecolor='k',zorder=zorder,
-                     label=r'KROSS+KGES', s=median_ms)
+    if all_data:
+        ax[0][1].scatter(aa2,bb2,marker='*',facecolor='cyan',edgecolor='k',zorder=zorder,
+                         label=r'KROSS+KGES', s=median_ms)
 
     #z=5, Faisst+2026 (filename: 2.csv uses direct Te abundances wherever available. .csv uses strong line abundances)
     df = pd.read_csv('observed_data/faisst2026_z=5_alpine_cristal_jwst2.csv')
@@ -275,30 +297,37 @@ def plot_obsv_data(ax, zorder=3):
     ax[1][0].scatter(df.loc[mask, 'Mstar'], df.loc[mask, 'OH'], marker='D', facecolor='white', edgecolor='m',
                     label='ALPINE-CRISTAL', zorder=7)
     # Non-Te measurements
-    ax[1][0].scatter(df.loc[~mask, 'Mstar'], df.loc[~mask, 'OH'], marker='D', facecolor='m', edgecolor='m',
-                    zorder=zorder)
+    if all_data:
+        ax[1][0].scatter(df.loc[~mask, 'Mstar'], df.loc[~mask, 'OH'], marker='D', facecolor='m', edgecolor='m',
+                        zorder=zorder)
 
     #z=10.38 galaxy from Curtis-Lake+2023, Table 1
-    ax[1][2].scatter(7.58, 6.78, marker='o', facecolor='k', edgecolor='green', 
-                     label='Curtis-Lake+2023', zorder=5)
+    if all_data:
+        ax[1][2].scatter(7.58, 6.78, marker='o', facecolor='k', edgecolor='green', 
+                         label='Curtis-Lake+2023', zorder=5)
     #z=10.05 galaxy from Álvarez-Márquez+2026, abstract
-    ax[1][2].scatter(np.log10(1.7e8), 7.292, marker='v', facecolor='k', edgecolor='green', 
-                     label='Álvarez-Márquez+2026', zorder=5)
+    if all_data:
+        ax[1][2].scatter(np.log10(1.7e8), 7.292, marker='v', facecolor='k', edgecolor='green', 
+                         label='Álvarez-Márquez+2026', zorder=5)
     #z=9.3 galaxy from Ikeda+2026
-    ax[1][2].scatter(np.log10(1.6e9), 7.54, marker='s', facecolor='m', edgecolor='k', 
-                     label='Ikeda+2026', zorder=5)
+    if all_data:
+        ax[1][2].scatter(np.log10(1.6e9), 7.54, marker='s', facecolor='m', edgecolor='k', 
+                         label='Ikeda+2026', zorder=5)
     #z=10.165 galaxy from Hsiao+2024
     ax[1][2].scatter(8.1, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                      zorder=7)
-    #z=8 galaxy from Wilott+2025 (data from Table C2 of Isobe+2026)
-    ax[1][1].scatter(7.67, 6.81, marker='^', facecolor='cyan', edgecolor='k', label='Wilott+2025', 
-                     zorder=zorder)
+    #z=8 galaxy from Willott+2025 (data from Table C2 of Isobe+2026)
+    if all_data:
+        ax[1][1].scatter(7.67, 6.81, marker='^', facecolor='cyan', edgecolor='k', label='Willott+2025', 
+                         zorder=zorder)
     #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
-    ax[1][1].scatter([6.77, 7.29], [7.11, 7.11], marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
-                     zorder=zorder)
+    if all_data:
+        ax[1][1].scatter([6.77, 7.29], [7.11, 7.11], marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
+                         zorder=zorder)
     #z=9.5 galaxy from Koller+2026 (data from Table C2 of Isobe+2026)
-    ax[1][2].scatter([6.83], [7.23], marker='<', facecolor='green', edgecolor='k', 
-                     zorder=zorder)
+    if all_data:
+        ax[1][2].scatter([6.83], [7.23], marker='<', facecolor='green', edgecolor='k', 
+                         zorder=zorder)
     #z=8 galaxy from Mowla+2024 (data from Table C2 of Isobe+2026)
     ax[1][1].scatter([7.88], [6.99], marker='<', facecolor='white', edgecolor='m',label='Mowla+2024', 
                      zorder=zorder)
@@ -307,16 +336,26 @@ def plot_obsv_data(ax, zorder=3):
     bb = pd.read_csv('observed_data/pollock2025_archival_z=9-10.csv')
     ax[1][2].scatter(bb['logMstar'], bb['OH'], marker='D', facecolor='white', edgecolor='k', zorder=7, 
                      label='Pollock+2026')
+
+    #z=9.8, Rinaldi+2026
+    ax[1][2].scatter([6.68], [7.44], marker='D', facecolor='white', edgecolor='r', zorder=7, 
+                     label='Rinaldi+2026')
+
+    #z=9.9, Pérez-Díaz+2026
+    ax[1][2].scatter([9.17], [7.60], marker='^', facecolor='white', edgecolor='b', zorder=7, 
+                     label='Pérez-Díaz+2026')
     
     #z=6-8, Chemerynska+2024
     bb = pd.read_csv('observed_data/chemerynska2024_uncover_z=6-8.csv')
-    ax[1][1].scatter(bb['logMstar'], bb['OH'], marker='*', facecolor='r', edgecolor='k', s=100,zorder=zorder, 
-                     label='UNCOVER')
+    if all_data:
+        ax[1][1].scatter(bb['logMstar'], bb['OH'], marker='*', facecolor='r', edgecolor='r', s=100,zorder=zorder, 
+                         label='UNCOVER')
 
     #z=2.3, Steidel+2014 (Table 6)
     bb = pd.read_csv('observed_data/steidel2014_kbss_z2.3.csv')
-    ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='p', facecolor='c', edgecolor='k', s=median_ms+50,zorder=zorder, 
-                     label='KBSS')
+    if all_data:
+        ax[0][2].scatter(bb['logMstar'], bb['OH'], marker='p', facecolor='c', edgecolor='k', s=median_ms+50,zorder=zorder, 
+                         label='KBSS')
     
     #z=6-7, Rowland+2025
     df = pd.read_csv('observed_data/rowland2025_z=6-7_rebels.csv')
@@ -334,14 +373,16 @@ def plot_obsv_data(ax, zorder=3):
             #print('First REBELS galaxy in ', i, j)
             #ax[i][j].errorbar(row['Mstar'], row['OH_strong'], xerr=[[row['Mstar_err_minus']], [row['Mstar_err_plus']]], yerr=[row['OH_strong_err']],
             #                  fmt='o', mfc='yellow', mec='k', ecolor='black', label='REBELS')
-            ax[i][j].scatter(row['Mstar'], row['OH_strong'],
-                              marker='X', facecolor='olive', edgecolor='k', label='REBELS', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['Mstar'], row['OH_strong'],
+                                  marker='X', facecolor='olive', edgecolor='k', label='REBELS', zorder=zorder)
             labels = True
         else:
             #ax[i][j].errorbar(row['Mstar'], row['OH_strong'], xerr=[[row['Mstar_err_minus']], [row['Mstar_err_plus']]], yerr=[row['OH_strong_err']],
             #                  fmt='o', mfc='yellow', mec='k', ecolor='black')
-            ax[i][j].scatter(row['Mstar'], row['OH_strong'],
-                             marker='X', facecolor='olive', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['Mstar'], row['OH_strong'],
+                                 marker='X', facecolor='olive', edgecolor='k', zorder=zorder)
 
     #z=5-7, Hsiao+2025 (data from Table C2 of Isobe+2026)
     df = pd.read_csv('observed_data/hsiao2025_sapphires_z5-6.csv')
@@ -354,12 +395,14 @@ def plot_obsv_data(ax, zorder=3):
         else:
             continue
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                              marker='s', facecolor='blue', edgecolor='k', label='SAPPHIRES', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                  marker='s', facecolor='blue', edgecolor='k', label='SAPPHIRES', zorder=zorder)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='s', facecolor='blue', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='s', facecolor='blue', edgecolor='k', zorder=zorder)
 
     #z=6-7, Hsiao+2026
     df = pd.read_csv('observed_data/hsiao2026_z6_glimpsed.csv')
@@ -379,36 +422,52 @@ def plot_obsv_data(ax, zorder=3):
             ax[i][j].scatter(row['logMstar'], row['OH'],
                               marker='s', facecolor='white', edgecolor='m', zorder=zorder)
 
-    #z=2-8, Stanton+2026
-    df = pd.read_csv('observed_data/stanton2026_z=2-8_excels.csv')
-    # Loop over each row and plot in the right subplot
-    labels = False
+    # z=2-8, Stanton+2026 (EXCELS)
+    # Load catalogues
+    df_strong = pd.read_csv('observed_data/stanton2026_z=2-8_excels.csv')
+    df_Te = pd.read_csv('observed_data/stanton2026_z=2-8_excels_directTe.csv')
+    # Ensure IDs are comparable
+    df_strong['ID'] = df_strong['ID'].astype(int)
+    df_Te['ID'] = df_Te['ID'].astype(int)
+    # Keep only galaxies with valid direct-Te measurements
+    df_Te = df_Te.dropna(subset=['OH_directTe']).copy()
+    # Remove strong-line measurements wherever direct-Te measurements exist
+    df_strong = df_strong[~df_strong['ID'].isin(df_Te['ID'])].copy()
+    # Identify metallicity measurement method
+    df_strong['method'] = 'strong'
+    df_Te['method'] = 'Te'
+    # Standardize metallicity column
+    df_strong['OH_plot'] = df_strong['OH_strong_val']
+    df_Te['OH_plot'] = df_Te['OH_directTe']
+    # Combine catalogues
+    df = pd.concat([df_strong, df_Te], ignore_index=True)
+    # Plot the EXCELS galaxies
     for idx, row in df.iterrows():
+
         if 0.5 <= row['z_spec'] < 2:
             i, j = 0, 1
         elif 2 <= row['z_spec'] < 4:
             i, j = 0, 2
         elif 4 <= row['z_spec'] < 6:
             i, j = 1, 0
-        elif 6<= row['z_spec'] < 9:
+        elif 6 <= row['z_spec'] < 9:
             i, j = 1, 1
         elif row['z_spec'] >= 9:
             i, j = 1, 2
         else:
             continue
-    
-        if labels==False:
-            #print('First EXCELS galaxy in ', i, j)
-            #ax[i][j].errorbar(row['logMstar_val'], row['OH_strong_val'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_strong_err_minus']], [row['OH_strong_err_plus']]],
-            #                  fmt='o', mfc='white', mec='m', ecolor='black', label='EXCELS')
-            ax[i][j].scatter(row['logMstar_val'], row['OH_strong_val'],
-                             marker='s', facecolor='cyan', edgecolor='k', label='EXCELS', zorder=7)
-            labels = True
+
+        if row['method'] == 'strong':
+            if all_data:
+                ax[i][j].scatter(row['logMstar_val'], row['OH_plot'], marker='s', facecolor='cyan', edgecolor='cyan', 
+                    label='EXCELS', zorder=7)
+
         else:
-            #ax[i][j].errorbar(row['logMstar_val'], row['OH_strong_val'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_strong_err_minus']], [row['OH_strong_err_plus']]],
-            #                  fmt='o', mfc='white', mec='m', ecolor='black')
-            ax[i][j].scatter(row['logMstar_val'], row['OH_strong_val'],
-                             marker='s', facecolor='cyan', edgecolor='k', zorder=7)
+            ax[i][j].scatter(row['logMstar_val'], row['OH_plot'], marker='s', facecolor='none', edgecolor='cyan', label='EXCELS' if not all_data else None, zorder=7)
+    # Print cross-matching statistics
+    #print(f"Strong-line galaxies plotted: {len(df_strong)}")
+    #print(f"Direct-Te galaxies plotted: {len(df_Te)}")
+    #print(f"Total galaxies: {len(df)}")
 
     #z=1-7, Sanders+2025
     df = pd.read_csv('observed_data/sanders2025_aurora_z=1-7.csv')
@@ -438,6 +497,33 @@ def plot_obsv_data(ax, zorder=3):
                              marker='v', facecolor='white', edgecolor='k', zorder=8, s=50)
 
 
+    #z=6-8, Rai+2026
+    df = pd.read_csv('observed_data/rai2026_omega_z=6-8.csv')
+    # Loop over each row and plot in the right subplot
+    labels = False
+    for idx, row in df.iterrows():
+        if 0.5 <= row['z'] < 2:
+            i, j = 0, 1
+        elif 2 <= row['z'] < 4:
+            i, j = 0, 2
+        elif 4 <= row['z'] < 6:
+            i, j = 1, 0
+        elif 6<= row['z'] < 9:
+            i, j = 1, 1
+        elif row['z'] >= 9:
+            i, j = 1, 2
+        else:
+            continue
+    
+        if labels==False:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='^', facecolor='white', edgecolor='m', label='OMEGA', zorder=zorder)
+            labels = True
+        else:
+            ax[i][j].scatter(row['logMstar'], row['OH'],
+                             marker='^', facecolor='white', edgecolor='m', zorder=zorder)
+
+
     #z=1-7, Lam+2026
     df = pd.read_csv('observed_data/lam2026_jades_stacked_z1-7.csv')
     # Loop over each row and plot in the right subplot
@@ -457,12 +543,14 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='s', facecolor='g', edgecolor='k', label='JADES DR3', zorder=7, s=median_ms)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='s', facecolor='g', edgecolor='k', label='JADES DR3', zorder=7, s=median_ms)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='s', facecolor='g', edgecolor='k', zorder=7, s=median_ms)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='s', facecolor='g', edgecolor='k', zorder=7, s=median_ms)
 
     #z=1-2, Henry+2021
     df = pd.read_csv('observed_data/henry2021_z=1-2_candels_wisp_tab5.csv')
@@ -483,14 +571,16 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='v', facecolor='gold', edgecolor='k', label='CANDELS', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='v', facecolor='gold', edgecolor='k', label='CANDELS', zorder=zorder)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='v', facecolor='gold', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='v', facecolor='gold', edgecolor='k', zorder=zorder)
 
-    #z=1-2, Revalski+2024
+    # z=1-2, Revalski+2024 (MUDF)
     df = pd.read_csv('observed_data/revalski2024_mudf_muse_z1-2.csv')
     labels = False
     for (zmin, zmax, i, j) in [
@@ -500,18 +590,22 @@ def plot_obsv_data(ax, zorder=3):
         (6, 9, 1, 1),
         (9, np.inf, 1, 2),
     ]:
-
         sel = (df['z'] >= zmin) & (df['z'] < zmax)
         sub = df.loc[sel]
         te = sub['Teflag'] == 1
 
-        if labels == False:
+        # Direct-Te metallicities: open pentagons
+        if te.any():
             ax[i][j].scatter(sub.loc[te, 'logMstar'], sub.loc[te, 'OH'], marker='p', facecolor='white', edgecolor='b',
-                             label='MUDF', zorder=7, s=50)
+                             label='MUDF' if not labels else None, zorder=7, s=50)
             labels = True
-        else:
-            ax[i][j].scatter(sub.loc[~te, 'logMstar'], sub.loc[~te, 'OH'], marker='p', facecolor='b', edgecolor='b',
-                            zorder=zorder, s=50)
+
+        # Strong-line metallicities: filled pentagons
+        if (~te).any():
+            if all_data:
+                ax[i][j].scatter(sub.loc[~te, 'logMstar'], sub.loc[~te, 'OH'], marker='p', facecolor='b', edgecolor='b', 
+                                 label='MUDF' if not labels else None, zorder=zorder, s=50)
+            labels = True
 
     #z=1-3, Li+2023
     df = pd.read_csv('observed_data/li2023_a2744_smacs_z2-3.csv')
@@ -526,12 +620,14 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='D', facecolor='r', edgecolor='k', label='A2744+SMACS', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='D', facecolor='r', edgecolor='k', label='A2744+SMACS', zorder=zorder)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='D', facecolor='r', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='D', facecolor='r', edgecolor='k', zorder=zorder)
 
     
     #z=3-10, Curti+2024
@@ -556,14 +652,16 @@ def plot_obsv_data(ax, zorder=3):
             #print('First JADES galaxy in ', i, j)
             #ax[i][j].errorbar(row['logMstar'], row['OH'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_err_minus']], [row['OH_err_plus']]],
             #                  fmt='o', ecolor='black', label='JADES', mfc='white', mec='b')
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', label='JADES DR1', facecolor='grey', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='o', label='JADES DR1', facecolor='grey', edgecolor='k', zorder=zorder)
             labels = True
         else:
             #ax[i][j].errorbar(row['logMstar'], row['OH'], xerr=[[row['logMstar_err_minus']], [row['logMstar_err_plus']]], yerr=[[row['OH_err_minus']], [row['OH_err_plus']]],
             #                  fmt='o', ecolor='black', mfc='white', mec='b')
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', facecolor='grey', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='o', facecolor='grey', edgecolor='k', zorder=zorder)
 
     #z=4-10, Sarkar+2025
     df = pd.read_csv('observed_data/sarkar2025_archival_z=4-10.csv')
@@ -584,17 +682,21 @@ def plot_obsv_data(ax, zorder=3):
     
         if labels==False:
             #print('First Sarkar galaxy in ', i, j)
-            ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='*', label='PRIMAL', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['logOH'],
+                                 marker='*', label='PRIMAL', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='*', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['logOH'],
+                                 marker='*', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
 
     
-    #z=4-8, Nakajima+2023
+    # z=4-8, Nakajima+2023
     df = pd.read_csv('observed_data/nakajima2023_z=4-8_ero_glass_ceers.csv')
-    # Loop over each row and plot in the right subplot
+    # Select only direct-Te abundances unless all_data=True
+    if not all_data:
+        df = df[df['MFlag'] == 1]
     labels = False
     for idx, row in df.iterrows():
         if 0.5 <= row['zspec'] < 2:
@@ -607,19 +709,10 @@ def plot_obsv_data(ax, zorder=3):
             i, j = 1, 1
         else:
             continue
-    
-        if labels==False:
-            #print('First ERO+GLASS+CEERS galaxy in ', i, j)
-            #ax[i][j].errorbar(row['logMstar'], row['logOH'], xerr=[[row['e_logMstar']], [row['E_logMstar']]], yerr=[[row['e_logOH']], [row['E_logOH']]],
-            #                  fmt='o', ecolor='black', label='ERO+GLASS+CEERS', mfc='white', mec='cyan')
-            ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='o', label='ERO+GLASS+CEERS', facecolor='white', edgecolor='blue', zorder=zorder)
-            labels = True
-        else:
-            #ax[i][j].errorbar(row['logMstar'], row['logOH'], xerr=[[row['e_logMstar']], [row['E_logMstar']]], yerr=[[row['e_logOH']], [row['E_logOH']]],
-            #                  fmt='o', ecolor='black', mfc='white', mec='cyan')
-            ax[i][j].scatter(row['logMstar'], row['logOH'],
-                             marker='o', facecolor='white', edgecolor='blue', zorder=zorder)
+        ax[i][j].scatter(row['logMstar'], row['logOH'], marker='o', label='ERO+GLASS+CEERS' if not labels else None,
+                         facecolor='white' if row['MFlag'] == 1 else 'blue', edgecolor='blue', zorder=zorder)
+        labels = True
+
 
     #z=1-10, Isobe+2026
     df = pd.read_csv('observed_data/isobe2026_jades_darkhorse_oasis_z1-10.csv')
@@ -638,16 +731,20 @@ def plot_obsv_data(ax, zorder=3):
             i, j = 1,2
     
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', label='JADES DR4+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='o', label='JADES DR4+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
             labels = True
         else:
-           ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', facecolor='yellow', edgecolor='k', zorder=zorder)
+           if all_data:
+               ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='o', facecolor='yellow', edgecolor='k', zorder=zorder)
  
-    #z=7-9, Langeroodi+2023
+    # z=7-9, Langeroodi+2023
     df = pd.read_csv('observed_data/langeroodi2023_archival_z=8.csv')
-    # Loop over each row and plot in the right subplot
+    # Select only direct-Te abundances unless all_data=True
+    if not all_data:
+        df = df[df['direct_flag'] == 1]
     labels = False
     for idx, row in df.iterrows():
         if 0.5 <= row['z_spec'] < 2:
@@ -662,14 +759,9 @@ def plot_obsv_data(ax, zorder=3):
             i, j = 1, 2
         else:
             continue
-    
-        if labels==False:
-            ax[i][j].scatter(row['logM_star'], row['O_H'],
-                             marker='*', label='Langeroodi+2023', facecolor='white', edgecolor='k', s=100, zorder=zorder)
-            labels = True
-        else:
-            ax[i][j].scatter(row['logM_star'], row['O_H'],
-                             marker='*', facecolor='white', edgecolor='k', s=100, zorder=zorder)
+        ax[i][j].scatter(row['logM_star'], row['O_H'], marker='*', label='Langeroodi+2023' if not labels else None,
+                         facecolor='white' if row['direct_flag'] == 1 else 'brown', edgecolor='brown', s=100, zorder=zorder)
+        labels = True
 
     #z=2-4, Cataldi+2025
     df = pd.read_csv('observed_data/cataldi2025_z=2-4_marta_tab2.csv')
@@ -716,12 +808,14 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', label='CECILIA', facecolor='gold', edgecolor='k', zorder=8)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='o', label='CECILIA', facecolor='gold', edgecolor='k', zorder=8)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='o', facecolor='gold', edgecolor='k', zorder=8)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='o', facecolor='gold', edgecolor='k', zorder=8)
 
     #z=0.6-2.7, Wuyts+2016
     df = pd.read_csv('observed_data/wuyts2016_kmos3d_z=0.6-2.7.csv')
@@ -738,11 +832,13 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if not labels:
-            ax[i][j].scatter(row['logMstar'], yval, marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
-                             zorder=zorder, s=40)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], yval, marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
+                                 zorder=zorder, s=40)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], yval, marker='P', facecolor='green', edgecolor='k', zorder=zorder, s=40)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], yval, marker='P', facecolor='green', edgecolor='k', zorder=zorder, s=40)
 
     #z=1.4-2.5, Forster-Schreiber+2018
     df = pd.read_csv('observed_data/forster-schreiber2018_sins_z2.csv')
@@ -759,11 +855,13 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if not labels:
-            ax[i][j].scatter(row['logMstar'], yval, marker='^', label='SINS/zc-SINF', facecolor='red', edgecolor='k',
-                             zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], yval, marker='^', label='SINS/zc-SINF', facecolor='red', edgecolor='k',
+                                 zorder=zorder)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], yval, marker='^', facecolor='red', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], yval, marker='^', facecolor='red', edgecolor='k', zorder=zorder)
 
     #z=1-3, He+2026
     df = pd.read_csv('observed_data/he2026_z1-3_ngdeep_stacked.csv')
@@ -778,37 +876,25 @@ def plot_obsv_data(ax, zorder=3):
             continue
     
         if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='s', label=r'NGDEEP', facecolor='m', edgecolor='k', zorder=zorder,
-                            s=median_ms)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='s', label=r'NGDEEP', facecolor='m', edgecolor='k', zorder=zorder,
+                                s=median_ms)
             labels = True
         else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='s', facecolor='m', edgecolor='k', zorder=zorder, s=median_ms)
-
-    #z=0.5-0.8, Lewis+2024
-    df = pd.read_csv('observed_data/lewis2024_legac_z0.7.csv')
-    # Loop over each row and plot in the right subplot
-    labels = False
-    for idx, row in df.iterrows():
-        if 0.5 <= row['z'] < 2:
-            i, j = 0, 1
-        else:
-            continue
-    
-        if labels==False:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='p', label=r'LEGA-C', facecolor='m', edgecolor='k', zorder=zorder)
-            labels = True
-        else:
-            ax[i][j].scatter(row['logMstar'], row['OH'],
-                             marker='p', facecolor='m', edgecolor='k', zorder=zorder)
+            if all_data:
+                ax[i][j].scatter(row['logMstar'], row['OH'],
+                                 marker='s', facecolor='m', edgecolor='k', zorder=zorder, s=median_ms)
 
     return None
 
 
+def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25, all_data=True):
+    """Plot observed metallicities versus redshift for a stellar-mass bin.
 
-def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
+    all_data=True reproduces the original plot. When False, plot only
+    white/unfilled markers (including EXCELS facecolor='none').
+    """
     median_ms = 100 #larger marker size for median datapoints
     #overplot observational data
     #z=0, Tremonti+2004
@@ -816,35 +902,49 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     xx = np.log10(df['x/values'][:])
     yy = df['y/values'][:]
     mask = np.abs(xx - logmsel) <= dm
-    ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='>', facecolor='violet', edgecolor='k', label='SDSS DR2', zorder=7, 
-                     s=median_ms)
+    if all_data:
+        ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='>', facecolor='violet', edgecolor='k', label='SDSS DR2', zorder=7, 
+                         s=median_ms)
 
     bb = pd.read_csv('observed_data/lee2006_spitzer_z=0.csv')
+    # Select galaxies within the stellar mass range
     mask = np.abs(bb['logM'] - logmsel) <= dm
-    ax.scatter(0*bb['logM'][mask]/bb['logM'][mask], bb['OH'][mask], marker='s', facecolor='white', edgecolor='k', 
-                     label='Lee+2006', zorder=zorder)
+    # Direct Te metallicities: open squares
+    mask_direct = mask & (bb['direct_flag'] == 1)
+    ax.scatter(np.zeros(mask_direct.sum()), bb.loc[mask_direct, 'OH'],
+               marker='s', facecolor='white', edgecolor='k',
+               label='Lee+2006', zorder=zorder)
+    # Strong-line metallicities: filled black squares
+    mask_strong = mask & (bb['direct_flag'] == 0)
+    if all_data:
+        ax.scatter(np.zeros(mask_strong.sum()), bb.loc[mask_strong, 'OH'],
+                   marker='s', facecolor='black', edgecolor='k',
+                   zorder=zorder)
 
     #z=0, Curti+2020
     df = h5py.File('observed_data/Curti2020.hdf5')
     xx = np.log10(df['x/values'][:])
     yy = df['y/values'][:]
     mask = np.abs(xx - logmsel) <= dm
-    ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='o', facecolor='cyan', edgecolor='k', label='SDSS DR7', zorder=zorder,
-                    s=median_ms)
+    if all_data:
+        ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='o', facecolor='cyan', edgecolor='k', label='SDSS DR7', zorder=zorder,
+                        s=median_ms)
 
     #z=0, FM+2022
     df = h5py.File('observed_data/Fraser-McKelvie_2021.hdf5')
     xx = np.log10(df['x/values'][:]/1.989e30) #base units are kg
     yy = df['y/values'][:]
     mask = np.abs(xx - logmsel) <= dm
-    ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='^', facecolor='green', edgecolor='k', label='SAMI', zorder=zorder,
-                    s=median_ms)
+    if all_data:
+        ax.scatter(0*xx[mask]/xx[mask], yy[mask], marker='^', facecolor='green', edgecolor='k', label='SAMI', zorder=zorder,
+                        s=median_ms)
     
     #z=0.8, Jain+2026
     bb = pd.read_csv('observed_data/jain2026_archival_z=0.8.csv')
     mask = np.abs(bb['logM'] - logmsel) <= dm
-    ax.scatter(0.8*bb['logM'][mask]/bb['logM'][mask], bb['O_H_O_based'][mask], marker='D', facecolor='yellow', edgecolor='k', 
-                     zorder=5, label='MOSDEF', s=median_ms)
+    if all_data:
+        ax.scatter(0.8*bb['logM'][mask]/bb['logM'][mask], bb['O_H_O_based'][mask], marker='D', facecolor='yellow', edgecolor='k', 
+                         zorder=5, label='MOSDEF', s=median_ms)
 
     #z=0.013, McQuinn+2026
     bb = pd.read_csv('observed_data/mcquinn2026_glow_z0.csv')
@@ -853,22 +953,24 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
                      zorder=5, label='GLOW')
 
     #z=0.8, Zahid+2011
-    bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
-    mask = np.abs(bb['logMstar'] - logmsel) <= dm
-    ax.scatter(0.8*bb['logMstar'][mask]/bb['logMstar'][mask], bb['OH'][mask], marker='<', facecolor='blue', edgecolor='k', zorder=5, 
-                     label='DEEP2', s=median_ms)
+    #bb = pd.read_csv('observed_data/zahid2011_z0.8_deep2_fig6.csv')
+    #mask = np.abs(bb['logMstar'] - logmsel) <= dm
+    #ax.scatter(0.8*bb['logMstar'][mask]/bb['logMstar'][mask], bb['OH'][mask], marker='<', facecolor='blue', edgecolor='k', zorder=5, 
+    #                 label='DEEP2', s=median_ms)
     
     #z=3.3, Jain+2026
     bb = pd.read_csv('observed_data/jain2026_archival_z=3.3.csv')
     mask = np.abs(bb['logM'] - logmsel) <= dm
-    ax.scatter(3.3*bb['logM'][mask]/bb['logM'][mask], bb['O_H_O_based'][mask], marker='D', facecolor='yellow', edgecolor='k', 
-                     zorder=zorder, s=median_ms)
+    if all_data:
+        ax.scatter(3.3*bb['logM'][mask]/bb['logM'][mask], bb['O_H_O_based'][mask], marker='D', facecolor='yellow', edgecolor='k', 
+                         zorder=zorder, s=median_ms)
 
     #z=3.5, Stanton+2024
     bb = pd.read_csv('observed_data/stanton2024_nirvandels_z3.5.csv')
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
-    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='o', facecolor='red', edgecolor='k', 
-                     zorder=zorder, label='NIRVANDELS')
+    if all_data:
+        ax.scatter(bb['z'][mask], bb['OH'][mask], marker='o', facecolor='red', edgecolor='k', 
+                         zorder=zorder, label='NIRVANDELS')
 
     #z=6-7, Kotiwale+2026
     bb = fits.open('observed_data/kotiwale2026_MZRtable_GRISM_z6.fits')
@@ -879,8 +981,9 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     #z=0.6-1.8, Gillmann+2021
     bb = pd.read_csv('observed_data/gillmann2021_kross_kges_z=0.6-1.8.csv')
     mask = np.abs(np.log10(bb['Mass']) - logmsel) <= dm
-    ax.scatter(bb['z'][mask],bb['OH'][mask],marker='*',facecolor='cyan',edgecolor='k',zorder=zorder,
-                     label=r'KROSS+KGES', s=median_ms)
+    if all_data:
+        ax.scatter(bb['z'][mask],bb['OH'][mask],marker='*',facecolor='cyan',edgecolor='k',zorder=zorder,
+                         label=r'KROSS+KGES', s=median_ms)
 
     #z=5, Faisst+2026
     df = pd.read_csv('observed_data/faisst2026_z=5_alpine_cristal_jwst2.csv')
@@ -888,8 +991,9 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask_te = df['Teflag'] == 1
     ax.scatter(df.loc[mask_mass & mask_te, 'z'], df.loc[mask_mass & mask_te, 'OH'], marker='D', facecolor='white', edgecolor='m', 
                      label='ALPINE-CRISTAL', zorder=7)
-    ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='D', facecolor='m', edgecolor='m', 
-                     zorder=zorder)
+    if all_data:
+        ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='D', facecolor='m', edgecolor='m', 
+                         zorder=zorder)
 
     #z=1-2, Revalski+2024
     df = pd.read_csv('observed_data/revalski2024_mudf_muse_z1-2.csv')
@@ -897,48 +1001,65 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     mask_te = df['Teflag'] == 1
     ax.scatter(df.loc[mask_mass & mask_te, 'z'], df.loc[mask_mass & mask_te, 'OH'], marker='p', facecolor='white', edgecolor='b', 
                      label='MUDF', zorder=7, s=50)
-    ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='p', facecolor='b', edgecolor='b', 
-                     zorder=zorder, s=50)
+    if all_data:
+        ax.scatter(df.loc[mask_mass & ~mask_te, 'z'], df.loc[mask_mass & ~mask_te, 'OH'], marker='p', facecolor='b', edgecolor='b', 
+                         zorder=zorder, s=50)
+
+    if np.abs(logmsel-6.68) <= dm:
+        #z=9.8 galaxy from Rinaldi+2026
+        ax.scatter(9.7995, 7.44, marker='D', facecolor='white', edgecolor='r', 
+                         label='Rinaldi+2026', zorder=7)
+    if np.abs(logmsel-9.17) <= dm:
+        #z=9.9 galaxy from Pérez-Díaz+2026
+        ax.scatter(9.878, 7.60, marker='^', facecolor='white', edgecolor='b', 
+                         label='Rinaldi+2026', zorder=7)
 
     if np.abs(logmsel-7.58) <= dm:
         #z=10.38 galaxy from Curtis-Lake+2023, Table 1
-        ax.scatter(10.38, 6.78, marker='o', facecolor='k', edgecolor='green', 
-                         label='Curtis-Lake+2023', zorder=5)
+        if all_data:
+            ax.scatter(10.38, 6.78, marker='o', facecolor='k', edgecolor='green', 
+                             label='Curtis-Lake+2023', zorder=5)
     if np.abs(logmsel-np.log10(1.7e8)) <= dm:
         #z=10.05 galaxy from Álvarez-Márquez+2026, abstract
-        ax.scatter(10.05, 7.292, marker='v', facecolor='k', edgecolor='green', 
-                         label='Álvarez-Márquez+2026', zorder=5)
+        if all_data:
+            ax.scatter(10.05, 7.292, marker='v', facecolor='k', edgecolor='green', 
+                             label='Álvarez-Márquez+2026', zorder=5)
     if np.abs(logmsel-np.log10(1.6e9)) <= dm:
         #z=9.3 galaxy from Ikeda+2026
-        ax.scatter(9.3, 7.54, marker='s', facecolor='m', edgecolor='k', 
-                         label='Ikeda+2026', zorder=5)
+        if all_data:
+            ax.scatter(9.3, 7.54, marker='s', facecolor='m', edgecolor='k', 
+                             label='Ikeda+2026', zorder=5)
     if np.abs(logmsel-8.1) <= dm:
         #z=10.165 galaxy from Hsiao+2024
         ax.scatter(10.165, 7.8, marker='*', facecolor='white', edgecolor='gold', label='Hsiao+2024', s=100, 
                          zorder=7)
     if np.abs(logmsel-6.77) <= dm:
         #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
-        ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
-                     zorder=zorder)
+        if all_data:
+            ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
+                         zorder=zorder)
 
     if np.abs(logmsel-7.29) <= dm:
         #z=8-10 galaxies from Koller+2026 (data from Table C2 of Isobe+2026)
-        ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
-                     zorder=zorder)
+        if all_data:
+            ax.scatter(8.45, 7.11, marker='<', facecolor='green', edgecolor='k', label='Koller+2026', 
+                         zorder=zorder)
 
     if np.abs(logmsel-6.83) <= dm:
         #z=9.5 galaxy from Koller+2026 (data from Table C2 of Isobe+2026)
-        ax.scatter(9.51, 7.23, marker='<', facecolor='green', edgecolor='k', 
-                         zorder=zorder)
+        if all_data:
+            ax.scatter(9.51, 7.23, marker='<', facecolor='green', edgecolor='k', 
+                             zorder=zorder)
 
     if np.abs(logmsel-7.88) <= dm:
         #z=8 galaxy from Mowla+2024 (data from Table C2 of Isobe+2026)
         ax.scatter(8.30, 6.99, marker='<', facecolor='white', edgecolor='m',label='Mowla+2024', 
                          zorder=zorder)
     if np.abs(logmsel-7.67) <= dm:
-        #z=8 galaxy from Wilott+2025 (data from Table C2 of Isobe+2026)
-        ax.scatter(8.20, 6.81, marker='^', facecolor='cyan', edgecolor='k',label='Wilott+2025', 
-                         zorder=zorder)
+        #z=8 galaxy from Willott+2025 (data from Table C2 of Isobe+2026)
+        if all_data:
+            ax.scatter(8.20, 6.81, marker='^', facecolor='cyan', edgecolor='k',label='Willott+2025', 
+                             zorder=zorder)
 
     #z=9-10, Pollock+2025
     bb = pd.read_csv('observed_data/pollock2025_archival_z=9-10.csv')
@@ -949,27 +1070,31 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     #z=2.3, Steidel+2014 (Table 6)
     bb = pd.read_csv('observed_data/steidel2014_kbss_z2.3.csv')
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
-    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='p', facecolor='c', edgecolor='k', zorder=7, s=median_ms+50, 
-                     label='Steidel+2014')
+    if all_data:
+        ax.scatter(bb['z'][mask], bb['OH'][mask], marker='p', facecolor='c', edgecolor='k', zorder=7, s=median_ms+50, 
+                         label='Steidel+2014')
     
     #z=6-8, Chemerynska+2024
     bb = pd.read_csv('observed_data/chemerynska2024_uncover_z=6-8.csv')
     mask = np.abs(bb['logMstar'] - logmsel) <= dm
-    ax.scatter(bb['z'][mask], bb['OH'][mask], marker='*', facecolor='r', edgecolor='k', s=100,zorder=zorder, 
-                     label='UNCOVER')
+    if all_data:
+        ax.scatter(bb['z'][mask], bb['OH'][mask], marker='*', facecolor='r', edgecolor='r', s=100,zorder=zorder, 
+                         label='UNCOVER')
     
     #z=6-7, Rowland+2025
     df = pd.read_csv('observed_data/rowland2025_z=6-7_rebels.csv')
     mask = np.abs(df['Mstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH_strong'][mask],
-                      marker='X', facecolor='olive', edgecolor='k', label='REBELS', zorder=zorder)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH_strong'][mask],
+                          marker='X', facecolor='olive', edgecolor='k', label='REBELS', zorder=zorder)
 
 
     #z=5-7, Hsiao+2025 (data from Table C2 of Isobe+2026)
     df = pd.read_csv('observed_data/hsiao2025_sapphires_z5-6.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                      marker='s', facecolor='blue', edgecolor='k', label='SAPPHIRES', zorder=zorder)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                          marker='s', facecolor='blue', edgecolor='k', label='SAPPHIRES', zorder=zorder)
 
     #z=6-7, Hsiao+2026
     df = pd.read_csv('observed_data/hsiao2026_z6_glimpsed.csv')
@@ -977,17 +1102,33 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     ax.scatter(df['z'][mask], df['OH'][mask],
                       marker='s', facecolor='white', edgecolor='m', label='GLIMPSE-D', zorder=zorder)
 
-    #z=2-8, Stanton+2026
-    df = pd.read_csv('observed_data/stanton2026_z=2-8_excels.csv')
-    mask = np.abs(df['logMstar_val'] - logmsel) <= dm
-    ax.scatter(df['z_spec'][mask], df['OH_strong_val'][mask],
-                     marker='s', facecolor='cyan', edgecolor='k', label='EXCELS', zorder=7)
+    # z=2-8, Stanton+2026 (EXCELS)
+    # Load catalogues
+    df_strong = pd.read_csv('observed_data/stanton2026_z=2-8_excels.csv')
+    df_Te = pd.read_csv('observed_data/stanton2026_z=2-8_excels_directTe.csv')
+    # Ensure IDs are comparable
+    df_strong['ID'] = df_strong['ID'].astype(int)
+    df_Te['ID'] = df_Te['ID'].astype(int)
+    # Keep only galaxies with valid direct-Te measurements
+    df_Te = df_Te.dropna(subset=['OH_directTe']).copy()
+    # Remove strong-line measurements wherever direct-Te measurements exist
+    df_strong = df_strong[~df_strong['ID'].isin(df_Te['ID'])].copy()
+    # Select galaxies in the desired stellar mass range
+    mask_strong = np.abs(df_strong['logMstar_val'] - logmsel) <= dm
+    mask_Te = np.abs(df_Te['logMstar_val'] - logmsel) <= dm
+    # Plot strong-line measurements (filled cyan squares)
+    if all_data:
+        ax.scatter(df_strong.loc[mask_strong, 'z_spec'], df_strong.loc[mask_strong, 'OH_strong_val'], marker='s',
+                   facecolor='cyan', edgecolor='cyan', label='EXCELS', zorder=7)
+    # Plot direct-Te measurements (empty cyan squares)
+    ax.scatter(df_Te.loc[mask_Te, 'z_spec'], df_Te.loc[mask_Te, 'OH_directTe'], marker='s', facecolor='none',
+               edgecolor='cyan', label='EXCELS' if not all_data else None, zorder=7)
 
     #z=0.5-0.8, Lewis+2024
-    df = pd.read_csv('observed_data/lewis2024_legac_z0.7.csv')
-    mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='p', facecolor='m', edgecolor='k', label='LEGA-C', zorder=zorder)
+    #df = pd.read_csv('observed_data/lewis2024_legac_z0.7.csv')
+    #mask = np.abs(df['logMstar'] - logmsel) <= dm
+    #ax.scatter(df['z'][mask], df['OH'][mask],
+    #                 marker='p', facecolor='m', edgecolor='k', label='LEGA-C', zorder=zorder)
 
     #z=1-7, Sanders+2025
     df = pd.read_csv('observed_data/sanders2025_aurora_z=1-7.csv')
@@ -998,44 +1139,72 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     #z=1-7, Lam+2026
     df = pd.read_csv('observed_data/lam2026_jades_stacked_z1-7.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='s', facecolor='g', edgecolor='k', label='JADES DR3', zorder=7, s=median_ms)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                         marker='s', facecolor='g', edgecolor='k', label='JADES DR3', zorder=7, s=median_ms)
 
     #z=1-2, Henry+2021
     df = pd.read_csv('observed_data/henry2021_z=1-2_candels_wisp_tab5.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='v', facecolor='gold', edgecolor='k', label='CANDELS', zorder=zorder)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                         marker='v', facecolor='gold', edgecolor='k', label='CANDELS', zorder=zorder)
 
     #z=1-3, Li+2023
     df = pd.read_csv('observed_data/li2023_a2744_smacs_z2-3.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='D', facecolor='r', edgecolor='k', label='A2744+SMACS', zorder=zorder)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                         marker='D', facecolor='r', edgecolor='k', label='A2744+SMACS', zorder=zorder)
     
     #z=3-10, Curti+2024
     df = pd.read_csv('observed_data/curti2024_z=3-10_jades.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['Redshift'][mask], df['OH'][mask],
-                     marker='o', label='JADES DR1', facecolor='grey', edgecolor='k', zorder=zorder)
+    if all_data:
+        ax.scatter(df['Redshift'][mask], df['OH'][mask],
+                         marker='o', label='JADES DR1', facecolor='grey', edgecolor='k', zorder=zorder)
 
     #z=4-10, Sarkar+2025
     df = pd.read_csv('observed_data/sarkar2025_archival_z=4-10.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['logOH'][mask],
-                     marker='*', label='PRIMAL', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
+    if all_data:
+        ax.scatter(df['z'][mask], df['logOH'][mask],
+                         marker='*', label='PRIMAL', facecolor='yellowgreen', edgecolor='k', zorder=5, s=100)
     
-    #z=4-8, Nakajima+2023
+    # z=4-8, Nakajima+2023
     df = pd.read_csv('observed_data/nakajima2023_z=4-8_ero_glass_ceers.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['zspec'][mask], df['logOH'][mask],
-                     marker='o', label='ERO+GLASS+CEERS', facecolor='white', edgecolor='blue', zorder=zorder)
+    # Select only direct-Te abundances unless all_data=True
+    if not all_data:
+        mask &= (df['MFlag'] == 1)
+    # Plot direct-Te measurements (open circles)
+    mask_direct = mask & (df['MFlag'] == 1)
+    ax.scatter(df.loc[mask_direct, 'zspec'], df.loc[mask_direct, 'logOH'], marker='o', label='ERO+GLASS+CEERS', facecolor='white',
+               edgecolor='blue', zorder=zorder)
+    # Plot strong-line measurements (filled circles) only if all_data=True
+    if all_data:
+        mask_strong = mask & (df['MFlag'] == 0)
+        ax.scatter(df.loc[mask_strong, 'zspec'], df.loc[mask_strong, 'logOH'], marker='o', facecolor='blue', edgecolor='blue',
+                   zorder=zorder)
 
-    #z=7-9, Langeroodi+2023
+    # z=7-9, Langeroodi+2023
     df = pd.read_csv('observed_data/langeroodi2023_archival_z=8.csv')
+    # Select stellar mass range
     mask = np.abs(df['logM_star'] - logmsel) <= dm
-    ax.scatter(df['z_spec'][mask], df['O_H'][mask],
-                     marker='*', label='Langeroodi+2023', facecolor='white', edgecolor='k', s=100, zorder=zorder)
+    # Select only direct-Te abundances unless all_data=True
+    if not all_data:
+        mask &= (df['direct_flag'] == 1)
+    # Plot direct-Te measurements (open stars)
+    mask_direct = mask & (df['direct_flag'] == 1)
+    ax.scatter(df.loc[mask_direct, 'z_spec'], df.loc[mask_direct, 'O_H'],
+               marker='*', label='Langeroodi+2023', facecolor='white',
+               edgecolor='brown', s=100, zorder=zorder)
+    # Plot indirect measurements (filled stars) only if all_data=True
+    if all_data:
+        mask_indirect = mask & (df['direct_flag'] == 0)
+        ax.scatter(df.loc[mask_indirect, 'z_spec'], df.loc[mask_indirect, 'O_H'],
+                   marker='*', facecolor='brown', edgecolor='brown',
+                   s=100, zorder=zorder)
 
     #z=2-4, Cataldi+2025
     df = pd.read_csv('observed_data/cataldi2025_z=2-4_marta_tab2.csv')
@@ -1046,37 +1215,48 @@ def plot_obsv_data_z(ax, zorder=3, logmsel=8, dm=0.25):
     #z=2-4, Raptis+2025
     df = pd.read_csv('observed_data/raptis2025_z=2-4_cecilia.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='o', label='CECILIA', facecolor='gold', edgecolor='k', zorder=8)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                         marker='o', label='CECILIA', facecolor='gold', edgecolor='k', zorder=8)
 
     #z=1-10, Isobe+2026
     df = pd.read_csv('observed_data/isobe2026_jades_darkhorse_oasis_z1-10.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                         marker='o', label='JADES DR4+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
+
+    #z=6-8, Rai+2026
+    df = pd.read_csv('observed_data/rai2026_omega_z=6-8.csv')
+    mask = np.abs(df['logMstar'] - logmsel) <= dm
     ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='o', label='JADES DR4+DH+OASIS', facecolor='yellow', edgecolor='k', zorder=zorder)
+                     marker='^', label='OMEGA', facecolor='white', edgecolor='m', zorder=zorder)
 
     #z=0.6-2.7, Wuyts+2016
     df = pd.read_csv('observed_data/wuyts2016_kmos3d_z=0.6-2.7.csv')
     xx=np.log10(df['NIIHa'])
     yy=np.array([invert_Curti20N2(x) for x in xx])
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], yy[mask], marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
-                     zorder=zorder, s=40)
+    if all_data:
+        ax.scatter(df['z'][mask], yy[mask], marker='P', label='KMOS3D', facecolor='green', edgecolor='k',
+                         zorder=zorder, s=40)
 
     #z=1.4-2.5, Forster-Schreiber+2018
     df = pd.read_csv('observed_data/forster-schreiber2018_sins_z2.csv')
     xx=np.log10(df['N2'])
     yy=np.array([invert_Curti20N2(x) for x in xx])
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], yy[mask], marker='^', label='SINS/zc-SINF', facecolor='r', edgecolor='k',
-                     zorder=zorder)
+    if all_data:
+        ax.scatter(df['z'][mask], yy[mask], marker='^', label='SINS/zc-SINF', facecolor='r', edgecolor='k',
+                         zorder=zorder)
 
     #z=1-3, He+2026
     df = pd.read_csv('observed_data/he2026_z1-3_ngdeep_stacked.csv')
     mask = np.abs(df['logMstar'] - logmsel) <= dm
-    ax.scatter(df['z'][mask], df['OH'][mask],
-                     marker='s', label=r'NGDEEP', facecolor='m', edgecolor='k', zorder=zorder,
-                    s=median_ms)
+    if all_data:
+        ax.scatter(df['z'][mask], df['OH'][mask],
+                         marker='s', label=r'NGDEEP', facecolor='m', edgecolor='k', zorder=zorder,
+                        s=median_ms)
 
     return None
 
