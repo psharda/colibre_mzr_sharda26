@@ -6,13 +6,13 @@ Authors: Piyush Sharda, Joop Schaye, Robert J. McGibbon et al.
 arXiv link: https://arxiv.org/abs/2606.25995
 ```
 
-The observational compilation is available in the directory `observed_data`. The functions `plot_obsv_data` and `plot_obsv_data_z` in `my_funcs.py` can be used to retrieve and plot the compiled observations on the mass-metallicity plane and the metallicity-redshift plane, respectively.
+The observational compilation is available in the directory `observed_data`. The functions `plot_obsv_data` and `plot_obsv_data_z` in `my_funcs.py` can be used to retrieve and plot the compiled observations on the mass-metallicity plane and the metallicity-redshift plane, respectively. The boolean toggle `plot_all_data` controls whether only direct Te abundances (figure C1), or all abundances (figure 3) should be plotted.
 
 The compilation of simulated data used from COLIBRE, as well as from EAGLE, TNG and SIMBA is available in the directory `simulated_data`. The SIMBA data was kindly provided by Alex Garcia.
 
 To produce the figures from the paper, simply clone this repository and run the associated jupyter notebook `plotting_scripts`, where each cell produces a given figure in the paper.
 
-For any queries about this repository or the associated paper, please contact Piyush Sharda, Leiden University (sharda@strw.leidenuniv.nl).
+For any queries about this repository or the associated paper, please contact Piyush Sharda, Leiden University / Flatiron Institute (sharda@strw.leidenuniv.nl, psharda@flatironinstitute.org).
 
 For queries about the [COLIBRE Project](https://colibre.strw.leidenuniv.nl/), please contact Joop Schaye, Leiden University (schaye@strw.leidenuniv.nl)
 
@@ -25,6 +25,5 @@ astropy
 cmasher
 h5py
 matplotlib
-
-
+pandas
 ```
